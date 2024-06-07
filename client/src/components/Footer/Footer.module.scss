@@ -1,0 +1,30 @@
+.linkWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 15px;
+    margin-top: 300px;
+}
+  
+.linkList {
+    width: 100%; 
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+  
+.vendorLink {
+    width: calc(25% - 10px); 
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center; 
+    a {
+        text-decoration: none;
+    }
+}
+
+.pdf {
+    font-size: 20px;
+    color: red;
+    margin: 5px;
+}
