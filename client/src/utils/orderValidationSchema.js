@@ -20,6 +20,11 @@ export const ADD_CUSTOM_PRODUCT = yup.object({
     discount: yup.number('Please enter discount from 0 to 100').required('discount is required').min(0).max(100)
 });
 
+export const LOGIN_VALIDATION_SCHEMA = yup.object({
+    login: yup.string().required('Login is required').min(3),
+    password: yup.string().required('Password is required').min(3),
+});
+
 
 // .test('is-decimal','Vendor Price must have maximum 2 digits after the decimal point',value => (value === undefined || value === null || /^\d+(\.\d{1,2})?$/.test(value.toString())))),
 // .matches(/^\d+(\.\d{1,2})?$/)
