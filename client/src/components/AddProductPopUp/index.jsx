@@ -28,7 +28,7 @@ function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
   }
 
   const onSubmit = (values, formikBag) => {
-    console.log(values, 'values');
+    //console.log(values, 'values');
     const newProduct = {
       ProductCode: new Array(values.productCode),
       Vendor_PartNo: new Array(values.vendorCode),
