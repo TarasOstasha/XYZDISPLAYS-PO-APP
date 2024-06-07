@@ -53,3 +53,7 @@ $base-success: aquamarine;
 .invalid {
   background-color: coral;
 }
+.fieldGroup {
+  display: flex;
+  align-items: center;
+}
