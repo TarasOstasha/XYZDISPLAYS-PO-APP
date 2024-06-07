@@ -2,12 +2,20 @@ import { BrowserRouter as Router, Route, Switch, Link, Redirect } from 'react-ro
 import './App.css'
 import Home from './pages/Home'
 import Auth from './pages/Auth'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import GuardedRoute from './pages/Auth/GuardedRoute';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginError, setLoginError] = useState(false);
+
+  useEffect(() => {
+    // Check localStorage for authentication status on app load
+    const storedLoginStatus = localStorage.getItem('isLoggedIn');
+    if (storedLoginStatus === 'true') {
+      setIsLoggedIn(true);
+    }
+  },[])
 
   const onSubmit = ({login, password}) => {
 
@@ -20,9 +28,13 @@ function App() {
     if(isValidLogin) {
       setIsLoggedIn(true);
       setLoginError(false);
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('login', login);
     } else {
       setIsLoggedIn(false);
       setLoginError(true);
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('login');
     }
 
   };  
