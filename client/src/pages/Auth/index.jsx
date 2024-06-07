@@ -50,6 +50,7 @@ function Auth({ onSubmit, loginError }) {
                     [styles.invalid]:
                         formikProps.touched.login &&
                         formikProps.errors.login,
+                    [styles.invalid]: loginError,    
                 })
                 const passwordClassNames = classNames(styles.input, {
                     [styles.valid]:
@@ -58,6 +59,7 @@ function Auth({ onSubmit, loginError }) {
                     [styles.invalid]:
                         formikProps.touched.password &&
                         formikProps.errors.password,
+                    [styles.invalid]: loginError,
                 })    
                 return (
                     <Form className={styles.loginForm}> 
