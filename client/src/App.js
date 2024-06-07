@@ -16,14 +16,14 @@ function App() {
         password: '1111'
     }
     const isValidLogin = login === ifValid.login && password === ifValid.password;
-    isValidLogin ? setIsLoggedIn(true) : setIsLoggedIn(false)
-    // if(isValidLogin) {
-    //   setIsLoggedIn(true)
-    //   console.log(isValidLogin);
-    // } else {
-    //   setIsLoggedIn(false)
-    //   console.log(isValidLogin);
-    // }
+    // isValidLogin ? setIsLoggedIn(true) : setIsLoggedIn(false)
+    if(isValidLogin) {
+      setIsLoggedIn(true);
+      setLoginError(false);
+    } else {
+      setIsLoggedIn(false);
+      setLoginError(true);
+    }
 
   };  
   return (
@@ -34,7 +34,7 @@ function App() {
         </Route> */}
         <GuardedRoute exact path="/" component={Home} isAuthenticated={isLoggedIn} />
         <Route exact path="/auth">
-          {isLoggedIn ? <Redirect to="/" /> : <Auth onSubmit={onSubmit} />}
+          {isLoggedIn ? <Redirect to="/" /> : <Auth onSubmit={onSubmit} loginError={loginError} />}
         </Route>
         {/* <Route path="/users/:id">
           <UserProfile />

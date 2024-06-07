@@ -11,7 +11,7 @@ import { LOGIN_VALIDATION_SCHEMA } from '../../utils/orderValidationSchema';
 
 
 
-function Auth({ onSubmit }) {
+function Auth({ onSubmit, loginError }) {
     // const [authorization, setAuthorization] = useState(false);
     const initialValues = {
         login: '',
@@ -28,7 +28,7 @@ function Auth({ onSubmit }) {
         //const isValidLogin = login === ifValid.login && password === ifValid.password;
         //setAuthorization(isValidLogin)
         onSubmit({login, password})
-        //console.log(isValidLogin);
+        console.log(loginError);
       };  
   return (
     <div className={styles.formWrapper}>
@@ -75,6 +75,7 @@ function Auth({ onSubmit }) {
                         <Field onChange={formikProps.handleChange} value={formikProps.values.password} className={`${styles.passwordInput} ${passwordClassNames}`} type="password" id="password" name="password" />
                         <ErrorMessage className={styles.errorDiv} name="password" component="div" />
                     </div>
+                    {loginError && <div className={styles.errorDiv}>Invalid login credentials </div>}
                     <div className={styles.buttonWrapper}>
                         <Button variant="btn btn-primary" type='submit'>
                                 Login
