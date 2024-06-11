@@ -6,7 +6,7 @@ function Home() {
   return (
     <div className='container'>
         <Header />    
-            Home Page
+            {/* Home Page */}
             <OrderFreight />
         <Footer />
     </div>

@@ -1,14 +1,19 @@
 import classNames from 'classnames'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 
 import styles from './AddProductPopUp.module.scss'
 import { ADD_CUSTOM_PRODUCT } from '../../utils/orderValidationSchema'
+import axios from 'axios'
+import { getProductById } from '../../api'
+import { VENDOR_LIST } from '../../utils/vendorsData'
 
 function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
+
   const [show, setShow] = useState(false)
+  const [productCode, setProductCode] = useState('')
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
 
@@ -23,7 +28,7 @@ function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
   }
 
   const onSubmit = (values, formikBag) => {
-    console.log(values, 'values');
+    //console.log(values, 'values');
     const newProduct = {
       ProductCode: new Array(values.productCode),
       Vendor_PartNo: new Array(values.vendorCode),
@@ -36,6 +41,43 @@ function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
     onFormValuesChange(newProduct)
     setShow(false)
   }
+
+
+  const findProduct = async (product) => {
+    setProductCode(product)
+  }
+
+  useEffect(() => {
+    const productUrl = `http://localhost:5000/api/products/${productCode}`
+    axios
+      .get(productUrl)
+      .then((response) => {
+        const { xmldata: { Products } } = response.data;
+
+        const matchingVendor = VENDOR_LIST.find(vendor => productCode.startsWith(vendor.code));
+        const discount = matchingVendor.discount.toString() || '0'
+        
+        const fieldsToUpdate = {
+          //Vendor_PartNo: ,
+          productName: Products[0].ProductName[0] || '',
+          vendorCode: Products[0].Vendor_PartNo[0] || '',
+          quantity: '1',
+          webPrice: parseFloat(Products[0].ProductPrice[0] || 0).toFixed(2),
+          Vendor_Price: parseFloat(Products[0].Vendor_Price[0] || 0).toFixed(2),
+          discount //'20'
+        }
+        
+        if (formikPropss.current) {
+          for (const field in fieldsToUpdate) {
+            formikPropss.current.setFieldValue(field, fieldsToUpdate[field]);
+          }
+        }
+      })
+      .catch((err) => {
+        console.error('An error occurred while fetching data:', err)
+      })
+  },[productCode])
+  let formikPropss = React.useRef();
   return (
     <div>
       <>
@@ -58,6 +100,7 @@ function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
                 >
                   {(formikProps) => {
                     // console.log(formikProps);
+                    formikPropss.current = formikProps;
                     const productCodeClassNames = classNames(styles.input, {
                       [styles.valid]:
                         formikProps.touched.productCode &&
@@ -123,15 +166,18 @@ function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
                     return (
                       <Form>
                         {/* <label htmlFor="productCode">Product Name:</label> */}
-                        <Field
-                          value={formikProps.values.productCode}
-                          onChange={formikProps.handleChange}
-                          type="text"
-                          name="productCode"
-                          id="productCode"
-                          className={`form-control ${productCodeClassNames}`}
-                          placeholder="Stock #"
-                        />
+                        <div className={styles.fieldGroup}>
+                          <Field
+                            value={formikProps.values.productCode}
+                            onChange={formikProps.handleChange}
+                            type="text"
+                            name="productCode"
+                            id="productCode"
+                            className={`form-control ${productCodeClassNames}`}
+                            placeholder="Stock #"
+                          />
+                          <button onClick={() => findProduct(formikProps.values.productCode)} type="button" className="btn btn-primary">Find</button>
+                        </div>
                         <ErrorMessage
                           name="productCode"
                           className={styles.errorDiv}
@@ -180,6 +226,7 @@ function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
                           component="div"
                         />
                         <Field
+                          value={formikProps.values.webPrice}
                           type="text"
                           name="webPrice"
                           onChange={formikProps.handleChange}
@@ -193,6 +240,7 @@ function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
                           component="div"
                         />
                         <Field
+                          value={formikProps.values.Vendor_Price}
                           type="text"
                           name="Vendor_Price"
                           onChange={formikProps.handleChange}
