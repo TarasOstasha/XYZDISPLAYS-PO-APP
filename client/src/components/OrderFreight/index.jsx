@@ -178,7 +178,8 @@ function OrderFreight() {
       return;
     }
   
-    const orderUrl = `http://localhost:5000/api/orders/${orderId}`;
+    // const orderUrl = `http://localhost:5000/api/orders/${orderId}`;
+    const orderUrl = `https://xyzdisplays-po-app.onrender.com/api/orders/${orderId}`;
     
     axios
       .get(orderUrl)
@@ -192,7 +193,9 @@ function OrderFreight() {
         const productCodes = Orders[0].OrderDetails.map((item) => item.ProductCode[0]);
         //console.log(productCodes, '<< productCodes');
         // Generating URLs for product requests
-        const productUrls = productCodes.map((code) => `http://localhost:5000/api/products/${code}`);
+        // const productUrls = productCodes.map((code) => `http://localhost:5000/api/products/${code}`);
+        const productUrls = productCodes.map((code) => `https://xyzdisplays-po-app.onrender.com/api/products/${code}`);
+
         //console.log(productUrls);
         // Fetching product data for all product codes in parallel
         Promise.all(productUrls.map((url) => axios.get(url)))
