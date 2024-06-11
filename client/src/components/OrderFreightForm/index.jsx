@@ -244,7 +244,7 @@ function OrderFreightForm({
 
   const isPriceOutOfRange = (webPrice, priceWithDiscount) => {
     const ratio = webPrice / priceWithDiscount - 1;
-    console.log(ratio);
+    //console.log(ratio);
     return ratio > 0.9 || ratio < 0.3;
   };
   
