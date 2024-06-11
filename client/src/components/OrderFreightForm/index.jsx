@@ -12,6 +12,7 @@ import styles from './OrderFreightForm.module.scss'
 import { useState, useEffect } from 'react'
 import AddProductPopUp from '../AddProductPopUp'
 import { saveOrder } from '../../api'
+import MarkupAmount from '../MarkupAmount'
 
 function OrderFreightForm({
   setOrderId,
@@ -240,6 +241,13 @@ function OrderFreightForm({
       ).email : 
       'Not Found';
   };
+
+  const isPriceOutOfRange = (webPrice, priceWithDiscount) => {
+    const ratio = webPrice / priceWithDiscount - 1;
+    console.log(ratio);
+    return ratio > 0.9 || ratio < 0.3;
+  };
+  
   
 
   return (
@@ -508,6 +516,7 @@ function OrderFreightForm({
                         </button>
                       )}
                     </th>
+                    <th scope="col">Note*</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -724,26 +733,11 @@ function OrderFreightForm({
                                             vendor.code,
                                           ),
                                       )
-                                      formikProps.setFieldValue(
-                                        'vendorAddress',
-                                        selectedVendor.address,
-                                      )
-                                      formikProps.setFieldValue(
-                                        'shipInfoDescription',
-                                        selectedVendor.shipInfoDescription,
-                                      )
-                                      formikProps.setFieldValue(
-                                        'ship',
-                                        selectedVendor.shipInfo,
-                                      )
-                                      formikProps.setFieldValue(
-                                        'productTableData',
-                                        choosenItems,
-                                      )
-                                      formikProps.setFieldValue(
-                                        'vendorEmails',
-                                        selectedVendor.email,
-                                      )
+                                      formikProps.setFieldValue('vendorAddress',selectedVendor.address)
+                                      formikProps.setFieldValue('shipInfoDescription',selectedVendor.shipInfoDescription)
+                                      formikProps.setFieldValue('ship',selectedVendor.shipInfo)
+                                      formikProps.setFieldValue('productTableData',choosenItems)
+                                      formikProps.setFieldValue('vendorEmails',selectedVendor.email)
                                     } else {
                                       formikProps.setFieldValue(
                                         'vendorAddress',
@@ -959,11 +953,20 @@ function OrderFreightForm({
                               Remove
                             </button>
                           </td>
+                          {isPriceOutOfRange(formattedPrice(o.ProductPrice?.[0]), priceWithDiscountPerUnit(o.Vendor_Price?.[0], o.discount)) && (
+                            <td>
+                              <span className={styles.rangeText}>
+                                {formattedPrice(o.ProductPrice?.[0]) / priceWithDiscountPerUnit(o.Vendor_Price?.[0], o.discount) < 0.9 && formattedPrice(o.ProductPrice?.[0]) / priceWithDiscountPerUnit(o.Vendor_Price?.[0], o.discount) > 0.3 ? "Price in Range" : "Price is Out of Range"}
+                              </span>
+                              <MarkupAmount />
+                            </td>
+                          )}
                         </tr>
                       ))}
                   </>
                 </tbody>
               </table>
+              
               <AddProductPopUp
                 rerenderOrderList={rerenderOrderList}
                 onFormValuesChange={handleFormValuesChange}
