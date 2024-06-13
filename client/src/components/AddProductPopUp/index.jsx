@@ -48,8 +48,8 @@ function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
   }
 
   useEffect(() => {
-    // const productUrl = `http://localhost:5000/api/products/${productCode}`
-    const productUrl = `https://xyzdisplays-po-app.onrender.com/api/products/${productCode}`
+    const productUrl = `http://localhost:5000/api/products/${productCode}`
+    // const productUrl = `https://xyzdisplays-po-app.onrender.com/api/products/${productCode}`
     axios
       .get(productUrl)
       .then((response) => {
