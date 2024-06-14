@@ -7,10 +7,10 @@ const HOST = process.env.HOST || 'localhost' // '127.0.0.1';
 
 const httpServer = http.createServer(app);
 
-// httpServer.listen(PORT, HOST, () =>
-//   console.log(`Server is listening on http://${HOST}:${PORT}`)
-// );
-
-httpServer.listen(PORT, () =>
-  console.log(`Server is listening on port ${PORT}`)
+httpServer.listen(PORT, HOST, () =>
+  console.log(`Server is listening on http://${HOST}:${PORT}`)
 );
+
+// httpServer.listen(PORT, () =>
+//   console.log(`Server is listening on port ${PORT}`)
+// );

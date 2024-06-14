@@ -189,7 +189,9 @@ function OrderFreight() {
         const {
           xmldata: { Orders },
         } = orderResponse.data;
-        //console.log(Orders, '<< Orders');
+        //console.log(Orders[0], '<< Orders');
+        //console.log(Orders[0].ShipAddress1[0], Orders[0].ShipCity[0], Orders[0].ShipCompanyName[0], Orders[0].ShipState[0], Orders[0].ShipPostalCode[0], Orders[0].ShipFirstName[0], Orders[0].ShipLastName[0], Orders[0].ShipPhoneNumber[0]);
+
         // Extracting Product Codes from Order Details
         const productCodes = Orders[0].OrderDetails.map((item) => item.ProductCode[0]);
         //console.log(productCodes, '<< productCodes');

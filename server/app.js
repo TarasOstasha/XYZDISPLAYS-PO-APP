@@ -15,11 +15,11 @@ app.use(express.json());
 app.use('/api', router);
 
 // Serve static files from the build folder
-app.use(express.static(path.join(__dirname, '../client/build')));
+// app.use(express.static(path.join(__dirname, '../client/build')));
 
 // For all other requests, send the index.html file
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/build/index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../client/build/index.html'));
+// });
 
 module.exports = app;
