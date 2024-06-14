@@ -9,7 +9,7 @@ module.exports.orderData = (productTableData) => {
         }
     }, 0).toFixed(2);
     return `
-        <table style="width: 95.5%;border: 2px solid;">
+        <table style="width: 100%;border: 2px solid;">
             <tbody>
                 <tr>
                     <td style="font-weight: bold;width:20%;">Item</td>
@@ -38,7 +38,7 @@ module.exports.orderData = (productTableData) => {
             const totalAmountAfterDiscount = (vendorPriceAfterDiscount * p.Quantity).toFixed(2);;
             const totalAmountBeforeDiscount = parseFloat(p.Quantity * p.Vendor_Price).toFixed(2);
             return `
-            <table style="width: 95.5%;border: 2px solid;">
+            <table style="width: 100%;border: 2px solid;">
                 <tbody>
                     <tr style="border: 1px solid;">
                         <td style="border-top: 1px solid;width:20%">${p.Vendor_PartNo}</td>
@@ -53,7 +53,7 @@ module.exports.orderData = (productTableData) => {
             </table>
             `
         }).join('')}
-        <table style="width: 95.5%;border: 2px solid;">
+        <table style="width: 100%;border: 2px solid;">
             <tbody>
                 <td style="width:750px"></td>
                 <td style="font-weight:bold;">Total Amount: </td>

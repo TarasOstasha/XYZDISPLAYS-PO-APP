@@ -8,16 +8,15 @@ module.exports.emailTemplate = (vendorAddress, po, date, ship, shipInfoDescripti
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const formattedDate = currentDate.toLocaleDateString('en-US', options);
     return `
-        <table>
+        <table style="width: 100%;">
             <tr>
                 <td>
                     <!-- first table : BEGIN -->
-                    <table>
+                    <table style="width: 100%;">
                         <tbody>
                             <tr>
                                 <td style="background:rgb(148, 146, 141);font-weight:bold;border: 2px solid;">Customer</td>
-                                <td style="width: 300px;"></td>
-                
+                                <td ></td>
                             </tr>
                             <tr>
                                 <td style="border: 2px solid;">
@@ -44,7 +43,7 @@ module.exports.emailTemplate = (vendorAddress, po, date, ship, shipInfoDescripti
                 </td>
                 <td>
                 <!-- second table : BEGIN -->
-                    <table>
+                    <table style="width: 100%;">
                         <tbody>
                             <tr>
                                 <td style="background:rgb(148, 146, 141);font-weight:bold;border: 2px solid;">P.O. #:</td>
@@ -81,15 +80,15 @@ module.exports.emailTemplate = (vendorAddress, po, date, ship, shipInfoDescripti
                 </td>
             </tr>
         </table>
-        <table style="width: 95.5%;">
-        <tbody>
-            <tr>
-                <td style="border: 2px solid;background: rgb(223, 166, 10);font-weight: bold;border: 2px solid;">Order Notes:</td>
-            </tr>
-            <tr>
-                <td style="border: 2px solid;height: 55px;border: 2px solid;">${orderNotes}</td>
-            </tr>
-        </tbody>
+        <table style="width: 100%;">
+            <tbody>
+                <tr>
+                    <td style="border: 2px solid;background: rgb(223, 166, 10);font-weight: bold;border: 2px solid;">Order Notes:</td>
+                </tr>
+                <tr>
+                    <td style="border: 2px solid;height: 55px;border: 2px solid;">${orderNotes}</td>
+                </tr>
+            </tbody>
         </table>
     `
 }
