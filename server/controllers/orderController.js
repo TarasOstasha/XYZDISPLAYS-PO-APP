@@ -349,7 +349,7 @@ module.exports.saveOrder = async (req, res, next) => {
     const emailTemplateTable = emailTemplate(vendorAddress, po, date, ship, shipInfoDescription, inHand, shipTo, orderNotes);
     
     // Define email content
-    const to = vendorEmails.join(',');
+    const to = vendorEmails.join(';');
     const subject = `xyzDisplays // Purchase Order ${po}`;
     const htmlContent = `
       <html>
