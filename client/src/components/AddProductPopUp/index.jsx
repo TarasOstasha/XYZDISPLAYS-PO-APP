@@ -11,7 +11,7 @@ import { getProductById } from '../../api'
 import { VENDOR_LIST } from '../../utils/vendorsData'
 
 function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
-
+  let formikPropss = React.useRef();
   const [show, setShow] = useState(false)
   const [productCode, setProductCode] = useState('')
   const handleClose = () => setShow(false)
@@ -40,15 +40,19 @@ function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
     }
     onFormValuesChange(newProduct)
     setShow(false)
+    formikBag.resetForm()
   }
 
 
-  const findProduct = async (product) => {
+  const findProduct = (product) => {
     const lowerCaseProduct = product.toLowerCase();
+    //console.log(product);
     setProductCode(lowerCaseProduct);
   }
-
+  
   useEffect(() => {
+    if (!productCode) return;
+    //console.log('useEffect triggered with productCode:', productCode);
     const productUrl = `http://localhost:5000/api/products/${productCode}`
     // const productUrl = `https://xyzdisplays-po-app.onrender.com/api/products/${productCode}`
     axios
@@ -79,7 +83,7 @@ function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
         console.error('An error occurred while fetching data:', err)
       })
   },[productCode])
-  let formikPropss = React.useRef();
+  // let formikPropss = React.useRef();
   return (
     <div>
       <>
