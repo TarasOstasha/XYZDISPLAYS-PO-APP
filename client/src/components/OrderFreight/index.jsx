@@ -19,16 +19,17 @@ function OrderFreight() {
   const [rerenderOrderList, setRerenderOrderList] = useState([]) // rerender when inserting discount value to our object
 
   // *** order ship to ***
-  const [shippingAddress1, setShippingAddress1] = useState('')
-  const [shipCity, setShipCity] = useState('')
-  const [shipCompanyName, setShipCompanyName] = useState('')
-  const [shipState, setShipState] = useState('')
-  const [shipCountry, setShipCountry] = useState('')
-  const [shipPostalCode, setShipPostalCode] = useState('')
-  const [shipName, setShipName] = useState('')
-  const [shipLastName, setShipLastName] = useState('')
-  const [shipPhoneNumber, setShipPhoneNumber] = useState('')
-  const [shipToAddress, setShipToAddress] = useState('')
+  // const [shippingAddress1, setShippingAddress1] = useState('')
+  // const [shipCity, setShipCity] = useState('')
+  // const [shipCompanyName, setShipCompanyName] = useState('')
+  // const [shipState, setShipState] = useState('')
+  // const [shipCountry, setShipCountry] = useState('')
+  // const [shipPostalCode, setShipPostalCode] = useState('')
+  // const [shipName, setShipName] = useState('')
+  // const [shipLastName, setShipLastName] = useState('')
+  // const [shipPhoneNumber, setShipPhoneNumber] = useState('')
+  // const [shipToAddress, setShipToAddress] = useState('')
+  const [orderClientAddress, setOrderClientAddress] = useState(null)
 
   const [removeOnclick, setRremoveOnclick] = useState(0)
   const [isEditing, setIsEditing] = useState(null)
@@ -173,6 +174,7 @@ function OrderFreight() {
 
   const [vendor, setVendor] = useState([])
 
+
   useEffect(() => {}, [removeOnclick])
   useEffect(() => {
     if (orderId.length < 5) {
@@ -189,9 +191,10 @@ function OrderFreight() {
         const {
           xmldata: { Orders },
         } = orderResponse.data;
-        //console.log(Orders[0], '<< Orders');
-        //console.log(Orders[0].ShipAddress1[0], Orders[0].ShipCity[0], Orders[0].ShipCompanyName[0], Orders[0].ShipState[0], Orders[0].ShipPostalCode[0], Orders[0].ShipFirstName[0], Orders[0].ShipLastName[0], Orders[0].ShipPhoneNumber[0]);
-
+        console.log(Orders[0], '<< Orders');
+        setOrderClientAddress(Orders[0])
+        console.log(Orders[0].ShipAddress1[0],) //Orders[0].ShipCity[0], Orders[0].ShipCompanyName[0], Orders[0].ShipState[0], Orders[0].ShipPostalCode[0], Orders[0].ShipFirstName[0], Orders[0].ShipLastName[0], Orders[0].ShipPhoneNumber[0]);
+        console.log(orderClientAddress);
         // Extracting Product Codes from Order Details
         const productCodes = Orders[0].OrderDetails.map((item) => item.ProductCode[0]);
         //console.log(productCodes, '<< productCodes');
@@ -249,26 +252,27 @@ function OrderFreight() {
             //setRerenderOrderList(updatedOrderListWithVendorCodes);
             //console.log(Orders[0], '>> Orders[0]');
             // Process further if needed
-            const shippingAddress1 = Orders[0].ShipAddress1[0];
-            const shipCity = Orders[0].ShipCity[0];
-            const shipCompanyName = Orders[0].ShipCompanyName[0];
-            const shipState = Orders[0].ShipState[0];
-            const shipCountry = Orders[0].ShipCountry[0]
-            const shipPostalCode = Orders[0].ShipPostalCode[0];
-            const shipName = Orders[0].ShipFirstName[0];
-            const shipLastName = Orders[0].ShipLastName[0];
-            const shipPhoneNumber = Orders[0].ShipPhoneNumber[0];
+            // const shippingAddress1 = Orders[0].ShipAddress1[0];
+            // const shipCity = Orders[0].ShipCity[0];
+            // const shipCompanyName = Orders[0]?.ShipCompanyName[0];
+            // const shipState = Orders[0].ShipState[0];
+            // const shipCountry = Orders[0].ShipCountry[0]
+            // const shipPostalCode = Orders[0].ShipPostalCode[0];
+            // const shipName = Orders[0].ShipFirstName[0];
+            // const shipLastName = Orders[0].ShipLastName[0];
+            // const shipPhoneNumber = Orders[0].ShipPhoneNumber[0];
             const customFieldInHandDate = Orders[0].Custom_Field_InHand[0];
             const orderComments = Orders[0].Order_Comments[0];
-            setShipCompanyName(shipCompanyName)
-            setShippingAddress1(shippingAddress1)
-            setShipCity(shipCity)
-            setShipState(shipState)
-            setShipCountry(shipCountry)
-            setShipPostalCode(shipPostalCode)
-            setShipName(shipName)
-            setShipLastName(shipLastName)
-            setShipPhoneNumber(shipPhoneNumber)
+            // console.log(shippingAddress1);
+            // setShipCompanyName(shipCompanyName)
+            // setShippingAddress1(shippingAddress1)
+            // setShipCity(shipCity)
+            // setShipState(shipState)
+            // setShipCountry(shipCountry)
+            // setShipPostalCode(shipPostalCode)
+            // setShipName(shipName)
+            // setShipLastName(shipLastName)
+            // setShipPhoneNumber(shipPhoneNumber)
             setCustomFieldInHand(customFieldInHandDate)
             setOrderComments(orderComments)
           })
@@ -280,6 +284,10 @@ function OrderFreight() {
         console.error('Error fetching order data:', orderError);
       });
   }, [orderId, discountRenderFlag]);
+      // Log updated orderClientAddress
+      useEffect(() => {
+        console.log(orderClientAddress);
+    }, [orderClientAddress]);
   return (
     <div className={styles.orderWrapper}>
       <OrderFreightForm
@@ -291,15 +299,15 @@ function OrderFreight() {
         handleToSave={handleToSave}
         handleToSaveTop={handleToSaveTop}
         setOrderId={setOrderId}
-        shipCompanyName={shipCompanyName}
-        shippingAddress1={shippingAddress1}
-        shipCity={shipCity}
-        shipCountry={shipCountry}
-        shipState={shipState}
-        shipPostalCode={shipPostalCode}
-        shipName={shipName}
-        shipLastName={shipLastName}
-        shipPhoneNumber={shipPhoneNumber}
+        // shipCompanyName={shipCompanyName}
+        // shippingAddress1={shippingAddress1}
+        // shipCity={shipCity}
+        // shipCountry={shipCountry}
+        // shipState={shipState}
+        // shipPostalCode={shipPostalCode}
+        // shipName={shipName}
+        // shipLastName={shipLastName}
+        // shipPhoneNumber={shipPhoneNumber}
         rerenderOrderList={rerenderOrderList}
         handleChangeInput={handleChangeInput}
         setVendorAddress={handleVendorAddressChange}
@@ -307,6 +315,7 @@ function OrderFreight() {
         setCustomFieldInHand={customFieldInHand}
         setOrderComments={orderComments}
         handleFormValuesChange={handleFormValuesChange}
+        orderClientAddress={orderClientAddress}
       />
       {/* <AddProductPopUp
         rerenderOrderList={rerenderOrderList}

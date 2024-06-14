@@ -16,15 +16,15 @@ import MarkupAmount from '../MarkupAmount'
 
 function OrderFreightForm({
   setOrderId,
-  shipCompanyName,
-  shippingAddress1,
-  shipCity,
-  shipName,
-  shipLastName,
-  shipPhoneNumber,
-  shipCountry,
-  shipState,
-  shipPostalCode,
+  // shipCompanyName,
+  // shippingAddress1,
+  // shipCity,
+  // shipName,
+  // shipLastName,
+  // shipPhoneNumber,
+  // shipCountry,
+  // shipState,
+  // shipPostalCode,
   rerenderOrderList,
   handleToRemove,
   handleToEdit,
@@ -38,7 +38,8 @@ function OrderFreightForm({
   setShipInfoDescription,
   setCustomFieldInHand,
   setOrderComments,
-  handleFormValuesChange
+  handleFormValuesChange,
+  orderClientAddress
 }) {
   // Inside your component
 
@@ -228,6 +229,29 @@ function OrderFreightForm({
       )) : 
       'Not Found';
   };
+  // render customer address
+  const renderCustomerAddress = () => {
+    const {ShipCompanyName = [], ShipAddress1 = [],ShipFirstName = [],ShipLastName = [],ShipCity = [],ShipState = [],ShipPostalCode = [],ShipCountry = [],ShipPhoneNumber = []} = orderClientAddress || {};
+    const shipCompanyName = ShipCompanyName[0] || '';
+    const shipFirstName = ShipFirstName[0] || '';
+    const shipLastName = ShipLastName[0] || '';
+    const shipAddress1 = ShipAddress1[0] || '';
+    const shipCity = ShipCity[0] || '';
+    const shipState = ShipState[0] || '';
+    const shipPostalCode = ShipPostalCode[0] || '';
+    const shipCountry = ShipCountry[0] || '';
+    const shipPhoneNumber = ShipPhoneNumber[0] || '';
+
+    return `
+      ${shipCompanyName}<br>
+      ${shipFirstName} ${shipLastName}<br>
+      ${shipAddress1}<br>
+      ${shipCity}, ${shipState}, ${shipPostalCode}<br>
+      ${shipCountry}<br>
+      ${shipPhoneNumber}
+    `;
+  }
+
   // render sender emails
   const renderEmails = () => {
     const pcode = rerenderOrderList[0]?.ProductCode[0].toLowerCase();
@@ -382,13 +406,14 @@ function OrderFreightForm({
                       { renderVendorAddress() }
                     </td>
                     <td className={styles.myTd} id="shipTo">
-                      {shipCompanyName} <br />
+                      <div dangerouslySetInnerHTML={{ __html: renderCustomerAddress() }} />
+                      {/* {shipCompanyName} <br />
                       {shipName} {shipLastName} <br />
                       {shippingAddress1} <br />
                       {shipCity}, {shipState} {shipPostalCode}
                       <br />
                       {shipCountry} <br />
-                      {shipPhoneNumber}
+                      {shipPhoneNumber} */}
                     </td>
                   </tr>
                 </tbody>
