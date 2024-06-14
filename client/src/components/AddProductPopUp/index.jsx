@@ -44,7 +44,8 @@ function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
 
 
   const findProduct = async (product) => {
-    setProductCode(product)
+    const lowerCaseProduct = product.toLowerCase();
+    setProductCode(lowerCaseProduct);
   }
 
   useEffect(() => {
