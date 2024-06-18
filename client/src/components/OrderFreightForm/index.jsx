@@ -105,10 +105,11 @@ function OrderFreightForm({
         }
       })
       values.productTableData.push(updatedValues)
-      //console.log(updatedValues);
+      
       //console.log('block if');
     } else {
       values.productTableData.push(...rerenderOrderList)
+      console.log(values, '<< values');
     }
 
     const orderData = await saveOrder(values)

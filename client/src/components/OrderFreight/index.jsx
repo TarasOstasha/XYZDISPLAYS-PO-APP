@@ -40,6 +40,7 @@ function OrderFreight() {
 
   const [customFieldInHand, setCustomFieldInHand] = useState()
   const [orderComments,setOrderComments] = useState()
+  const [vendor, setVendor] = useState([])
 
   const handleToRemove = (index, array) => {
     if (index >= 0 && index < array.length) {
@@ -172,7 +173,7 @@ function OrderFreight() {
     setShipInfoDescription(vendor)
   }
 
-  const [vendor, setVendor] = useState([])
+
 
 
   useEffect(() => {}, [removeOnclick])
@@ -191,10 +192,10 @@ function OrderFreight() {
         const {
           xmldata: { Orders },
         } = orderResponse.data;
-        console.log(Orders[0], '<< Orders');
+        //console.log(Orders[0], '<< Orders');
         setOrderClientAddress(Orders[0])
-        console.log(Orders[0].ShipAddress1[0],) //Orders[0].ShipCity[0], Orders[0].ShipCompanyName[0], Orders[0].ShipState[0], Orders[0].ShipPostalCode[0], Orders[0].ShipFirstName[0], Orders[0].ShipLastName[0], Orders[0].ShipPhoneNumber[0]);
-        console.log(orderClientAddress);
+        //console.log(Orders[0].ShipAddress1[0],) //Orders[0].ShipCity[0], Orders[0].ShipCompanyName[0], Orders[0].ShipState[0], Orders[0].ShipPostalCode[0], Orders[0].ShipFirstName[0], Orders[0].ShipLastName[0], Orders[0].ShipPhoneNumber[0]);
+        //console.log(orderClientAddress);
         // Extracting Product Codes from Order Details
         const productCodes = Orders[0].OrderDetails.map((item) => item.ProductCode[0]);
         //console.log(productCodes, '<< productCodes');
@@ -213,7 +214,7 @@ function OrderFreight() {
               const {
                 xmldata: { Products },
               } = response.data;
-              
+              //console.log(Products, '>> Products');
               return Products && Products.length > 0
                 ? {
                     Vendor_PartNo: [Products[0].Vendor_PartNo[0]],
@@ -224,19 +225,20 @@ function OrderFreight() {
 
             // Filtering out null values from vendors
             const validVendors = vendors.filter((vendor) => vendor !== null);
-  
+            //console.log(validVendors, '>> validVendors');
             // Update the vendor state with valid vendor data
             setVendor((prevVendor) => {
               const updatedVendor = [...prevVendor, ...validVendors];
               return updatedVendor;
             });
-  
+            //console.log(vendor,'>> vendor');
             // Update order details with vendor codes
             const updatedOrderListWithVendorCodes = Orders[0].OrderDetails.map((order, index) => {
-              const matchingVendor = validVendors.find((vendor) => vendor.ProductCode[0] === order.ProductCode[0]);
+              //console.log(order.ProductCode[0], '<< order');
+              const matchingVendor = validVendors.find((vendor) => vendor.ProductCode[0].toLowerCase() === order.ProductCode[0].toLowerCase());
               return matchingVendor ? { ...order, ...matchingVendor } : order;
             });
-            //console.log(updatedOrderListWithVendorCodes, 'updatedOrderListWithVendorCodes');
+            //console.log(updatedOrderListWithVendorCodes, '<< updatedOrderListWithVendorCodes');
             setRerenderOrderList(updatedOrderListWithVendorCodes);
             // add discount
             updatedOrderListWithVendorCodes.map((order, index) => {
