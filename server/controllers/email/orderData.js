@@ -55,9 +55,9 @@ module.exports.orderData = (productTableData) => {
         }).join('')}
         <table style="width: 100%;border: 2px solid;">
             <tbody>
-                <td style="width:750px"></td>
-                <td style="font-weight:bold;">Total Amount: </td>
-                <td style="font-weight:bold;">$${grandTotal}</td>
+                <td style="width:80%"></td>
+                <td style="font-weight:bold;width:15%">Total Amount: </td>
+                <td style="font-weight:bold;width:5%">$${grandTotal}</td>
             </tbody>
         </table>
     `

@@ -13,6 +13,10 @@ $outlook = New-Object -ComObject Outlook.Application
 # Create a new mail item
 $mail = $outlook.CreateItem(0)
 
+# Set the sender (FROM field)
+$mail.Sender = "sales@xyzdisplays.com"
+$mail.SendUsingAccount = $outlook.Session.Accounts.Item("sales@xyzdisplays.com")
+
 # Set the recipient
 $mail.To = $to
 
@@ -23,7 +27,11 @@ $mail.Subject = $subject
 $mail.HTMLBody = $htmlContent
 
 # Set the FROM field to sales@xyzdisplays.com
-$mail.SentOnBehalfOfName = "sales@xyzdisplays.com"
+# $mail.SentOnBehalfOfName = "sales@xyzdisplays.com"
 
 # Display the mail item
 $mail.Display()
+
+# Clean up
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($outlook) | Out-Null
+Remove-Variable outlook
