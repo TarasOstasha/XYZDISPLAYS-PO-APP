@@ -1,0 +1,23 @@
+$base-error: coral;
+$base-success: aquamarine;
+
+.errorDiv {
+  color: $base-error;
+}
+
+.error {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  color: red;
+}
+.valid {
+  background-color: aquamarine;
+}
+.invalid {
+  background-color: coral;
+}
+.fieldGroup {
+  display: flex;
+  align-items: center;
+}

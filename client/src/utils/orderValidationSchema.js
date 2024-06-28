@@ -25,6 +25,14 @@ export const LOGIN_VALIDATION_SCHEMA = yup.object({
     password: yup.string().required('Password is required').min(3),
 });
 
+export const ADD_OPTION_SCHEMA = yup.object({
+    options_id: yup.number().required('Option id is required').min(3),
+    product_code: yup.string().required('productCode is required'),
+    price: yup.number().typeError('Price must be a number').required('Price is required'),
+    quantity: yup.number('Quantity must be a number').required(),
+    is_default: yup.boolean().required()
+});
+
 
 // .test('is-decimal','Vendor Price must have maximum 2 digits after the decimal point',value => (value === undefined || value === null || /^\d+(\.\d{1,2})?$/.test(value.toString())))),
 // .matches(/^\d+(\.\d{1,2})?$/)

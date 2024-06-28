@@ -1,9 +1,11 @@
-import { BrowserRouter as Router, Route, Switch, Link, Redirect } from 'react-router-dom'
-import './App.css'
-import Home from './pages/Home'
-import Auth from './pages/Auth'
+import { BrowserRouter as Router, Route, Switch, Link, Redirect } from 'react-router-dom';
+import './App.css';
+import Home from './pages/Home';
+import Auth from './pages/Auth';
+import AddOption from './pages/AddOption';
 import React, { useEffect, useState } from 'react';
 import GuardedRoute from './pages/Auth/GuardedRoute';
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -45,6 +47,8 @@ function App() {
           <Home />
         </Route> */}
         <GuardedRoute exact path="/" component={Home} isAuthenticated={isLoggedIn} />
+        {/* <GuardedRoute exact path="/option" component={AddOption} isAuthenticated={isLoggedIn} /> */}
+        <Route exact path="/option"><AddOption /></Route>
         <Route exact path="/auth">
           {isLoggedIn ? <Redirect to="/" /> : <Auth onSubmit={onSubmit} loginError={loginError} />}
         </Route>
