@@ -7,13 +7,13 @@ const optionRouter = Router();
 
 optionRouter
   .route('/')
-  //.get(orderController.getOrders)
+  .get(optionController.getOptions)
   .post(optionController.saveOption)
 
 
-// orderRouter
-//   .route('/:id')
-//   .get(orderController.getOrderById)
+optionRouter
+  .route('/:id')
+  .get(optionController.getOptionById)
 
 
 
