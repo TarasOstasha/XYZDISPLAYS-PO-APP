@@ -43,9 +43,17 @@ module.exports.getOptions = async (req, res, next) => {
 }
 
 module.exports.getOptionById = async (req, res, next) => {
-
+    const { id } = req.params;
     try {
-        
+        const foundOption = await Option.findByPk(id, {
+            raw: true,
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+        });
+      
+        if (!foundOption) {
+        return next(createHttpError(404, 'User not found ):'));
+        }
+        res.status(200).send({ data: foundOption });
     } catch (error) {
         next(error)
     }
