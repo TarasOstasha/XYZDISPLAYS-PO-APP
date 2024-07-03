@@ -232,11 +232,12 @@ function OrderFreightForm({
   };
   // render customer address
   const renderCustomerAddress = () => {
-    const {ShipCompanyName = [], ShipAddress1 = [],ShipFirstName = [],ShipLastName = [],ShipCity = [],ShipState = [],ShipPostalCode = [],ShipCountry = [],ShipPhoneNumber = []} = orderClientAddress || {};
+    const {ShipCompanyName = [], ShipAddress1 = [], ShipAddress2 = [],ShipFirstName = [],ShipLastName = [],ShipCity = [],ShipState = [],ShipPostalCode = [],ShipCountry = [],ShipPhoneNumber = []} = orderClientAddress || {};
     const shipCompanyName = ShipCompanyName[0] || '';
     const shipFirstName = ShipFirstName[0] || '';
     const shipLastName = ShipLastName[0] || '';
     const shipAddress1 = ShipAddress1[0] || '';
+    const shipAddress2 = ShipAddress2[0] || '';
     const shipCity = ShipCity[0] || '';
     const shipState = ShipState[0] || '';
     const shipPostalCode = ShipPostalCode[0] || '';
@@ -246,7 +247,7 @@ function OrderFreightForm({
     return `
       ${shipCompanyName}<br>
       ${shipFirstName} ${shipLastName}<br>
-      ${shipAddress1}<br>
+      ${shipAddress1} ${shipAddress2}<br>
       ${shipCity}, ${shipState}, ${shipPostalCode}<br>
       ${shipCountry}<br>
       ${shipPhoneNumber}
