@@ -350,16 +350,33 @@ function OrderFreight() {
       }
     };
     
+    let quantityItemObject = [];
     const processProductResponses = (productResponses) => {
       const vendors = productResponses.map((response) => {
         const { xmldata: { Products } } = response.data;
     
         if (Products && Products[0] && Products[0].EAN && Products[0].EAN[0]) {
           const kits = Products[0].EAN[0].split(',');
-          const kitUrls = kits.map((code) => `http://localhost:5000/api/products/${code}`);
+
+          const parsedKits = kits.map(item => {
+            const match = item.match(/^(\D+\d+)(?:x(\d+))?$/);
+            return match ? match[1] : item;
+          });
+
+          quantityItemObject = kits.reduce((acc, item) => {
+            const match = item.match(/^(\D+\d+)(?:x(\d+))?$/);
+            if (match) {
+              const key = match[1];
+              const quantity = match[2] ? parseInt(match[2], 10) : 1;
+              acc[key] = quantity;
+            }
+            return acc;
+          }, {});
+
+          const kitUrls = parsedKits.map((code) => `http://localhost:5000/api/products/${code}`);
           fetchKitData(kitUrls);
         }
-    
+
         return Products && Products.length > 0
           ? {
               Vendor_PartNo: [Products[0].Vendor_PartNo[0]],
@@ -367,7 +384,7 @@ function OrderFreight() {
               ProductName: [Products[0].ProductName[0]],
               ProductPrice: [Products[0].ProductPrice[0]],
               Vendor_Price: [Products[0].Vendor_Price[0]],
-              Quantity: [1] // here we should think what will be the best solution, example or100*2, and than devide 
+              //Quantity: [1] // filled this in fetchKitData
             }
           : null;
       });
@@ -375,11 +392,19 @@ function OrderFreight() {
       return vendors.filter((vendor) => vendor !== null);
     };
     
+    const replaceQuantities = (products, replacements) => {
+      products.forEach(product => {
+        const code = product.ProductCode[0];
+        if (replacements.hasOwnProperty(code)) {
+          product.Quantity = [replacements[code]];
+        }
+      });
+    }
     const fetchKitData = async (kitUrls) => {
       try {
         const kitResponses = await Promise.all(kitUrls.map((url) => axios.get(url)));
         const kitVendors = processProductResponses(kitResponses);
-        console.log(kitVendors);
+        replaceQuantities(kitVendors, quantityItemObject); // update quantity
         updateVendorState(kitVendors);
         applyDiscounts(kitVendors)
       } catch (error) {
