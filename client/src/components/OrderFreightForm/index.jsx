@@ -966,7 +966,7 @@ function OrderFreightForm({
                                   o.discount,
                                   o.Quantity?.[0],
                                 )
-                              : ''}
+                              : ''} 
                           </td>
                           <td className={styles.groupedTd}>
                             <button

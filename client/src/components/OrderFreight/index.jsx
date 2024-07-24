@@ -357,7 +357,9 @@ function OrderFreight() {
     
         if (Products && Products[0] && Products[0].EAN && Products[0].EAN[0]) {
           const kits = Products[0].EAN[0].split(',');
-
+          if(kits[kits.length - 1] === 'extra') {
+            alert('Please fill out manually!!!')
+          }
           const parsedKits = kits.map(item => {
             const match = item.match(/^(\D+\d+)(?:x(\d+))?$/);
             return match ? match[1] : item;
