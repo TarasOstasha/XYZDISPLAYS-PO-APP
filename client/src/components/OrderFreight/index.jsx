@@ -351,20 +351,62 @@ function OrderFreight() {
     };
     
     let quantityItemObject = [];
+    // const processProductResponses = (productResponses) => {
+    //   const vendors = productResponses.map((response) => {
+    //     const { xmldata: { Products } } = response.data;
+    //     console.log(Products, '<< Products');
+    //     if (Products && Products[0] && Products[0].EAN && Products[0].EAN[0]) {
+    //       const kits = Products[0].EAN[0].split(',');
+    //       if(kits[kits.length - 1] === 'extra') {
+    //         alert('Please fill out manually!!!')
+    //       }
+    //       const parsedKits = kits.map(item => {
+    //         const match = item.match(/^(\D+\d+)(?:x(\d+))?$/);
+    //         return match ? match[1] : item;
+    //       });
+
+    //       quantityItemObject = kits.reduce((acc, item) => {
+    //         const match = item.match(/^(\D+\d+)(?:x(\d+))?$/);
+    //         if (match) {
+    //           const key = match[1];
+    //           const quantity = match[2] ? parseInt(match[2], 10) : 1;
+    //           acc[key] = quantity;
+    //         }
+    //         return acc;
+    //       }, {});
+
+    //       const kitUrls = parsedKits.map((code) => `http://localhost:5000/api/products/${code}`);
+    //       fetchKitData(kitUrls);
+    //     }
+
+    //     return Products && Products.length > 0
+    //       ? {
+    //           Vendor_PartNo: [Products[0].Vendor_PartNo[0]],
+    //           ProductCode: [Products[0].ProductCode[0]],
+    //           ProductName: [Products[0].ProductName[0]],
+    //           ProductPrice: [Products[0].ProductPrice[0]],
+    //           Vendor_Price: [Products[0].Vendor_Price[0]],
+    //           //Quantity: [1] // filled this in fetchKitData
+    //         }
+    //       : null;
+    //   });
+    
+    //   return vendors.filter((vendor) => vendor !== null);
+    // };
     const processProductResponses = (productResponses) => {
       const vendors = productResponses.map((response) => {
         const { xmldata: { Products } } = response.data;
-    
+        console.log(Products, '<< Products');
         if (Products && Products[0] && Products[0].EAN && Products[0].EAN[0]) {
           const kits = Products[0].EAN[0].split(',');
-          if(kits[kits.length - 1] === 'extra') {
-            alert('Please fill out manually!!!')
+          if (kits[kits.length - 1] === 'extra') {
+            alert('Please fill out manually!!!');
           }
           const parsedKits = kits.map(item => {
             const match = item.match(/^(\D+\d+)(?:x(\d+))?$/);
             return match ? match[1] : item;
           });
-
+    
           quantityItemObject = kits.reduce((acc, item) => {
             const match = item.match(/^(\D+\d+)(?:x(\d+))?$/);
             if (match) {
@@ -374,21 +416,31 @@ function OrderFreight() {
             }
             return acc;
           }, {});
-
+    
           const kitUrls = parsedKits.map((code) => `http://localhost:5000/api/products/${code}`);
           fetchKitData(kitUrls);
         }
-
-        return Products && Products.length > 0
-          ? {
-              Vendor_PartNo: [Products[0].Vendor_PartNo[0]],
-              ProductCode: [Products[0].ProductCode[0]],
-              ProductName: [Products[0].ProductName[0]],
-              ProductPrice: [Products[0].ProductPrice[0]],
-              Vendor_Price: [Products[0].Vendor_Price[0]],
-              //Quantity: [1] // filled this in fetchKitData
-            }
-          : null;
+    
+        if (Products && Products.length > 0) {
+          const product = Products[0];
+          let vendorPartNo = product.Vendor_PartNo[0];
+          
+          // Check if ProductCode starts with 'or', 'OR', 'Or', or 'oR'
+          const productCode = product.ProductCode[0];
+          if (/^or$/i.test(productCode.substring(0, 2))) {
+            vendorPartNo = product.Google_Age_Group[0];
+          }
+    
+          return {
+            Vendor_PartNo: [vendorPartNo],
+            ProductCode: [productCode],
+            ProductName: [product.ProductName[0]],
+            ProductPrice: [product.ProductPrice[0]],
+            Vendor_Price: [product.Vendor_Price[0]],
+            // Quantity: [1] // filled this in fetchKitData
+          };
+        }
+        return null;
       });
     
       return vendors.filter((vendor) => vendor !== null);
@@ -424,7 +476,7 @@ function OrderFreight() {
         const matchingVendor = validVendors.find((vendor) => vendor.ProductCode[0].toLowerCase() === order.ProductCode[0].toLowerCase());
         return matchingVendor ? { ...order, ...matchingVendor } : order;
       });
-      console.log(updatedOrderListWithVendorCodes);
+      //console.log(updatedOrderListWithVendorCodes);
       setRerenderOrderList(updatedOrderListWithVendorCodes);
       applyDiscounts(updatedOrderListWithVendorCodes);
     };
