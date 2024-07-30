@@ -12,7 +12,8 @@ import OrderFreightForm from '../OrderFreightForm'
 import AddProductPopUp from '../AddProductPopUp'
 
 function OrderFreight() {
-  let discountRenderFlag = false
+  let discountRenderFlag = false;
+
   const [orderId, setOrderId] = useState('')
 
   // *** order Detail ***
@@ -31,6 +32,7 @@ function OrderFreight() {
   const [customFieldInHand, setCustomFieldInHand] = useState()
   const [orderComments,setOrderComments] = useState()
   const [vendor, setVendor] = useState([])
+  const [orderProductDetails, setOrderProductDetails] = useState(null);
 
   const handleToRemove = (index, array) => {
     if (index >= 0 && index < array.length) {
@@ -325,16 +327,24 @@ function OrderFreight() {
       try {
         const orderResponse = await axios.get(orderUrl);
         const { xmldata: { Orders } } = orderResponse.data;
-    
+      
         if (Orders && Orders[0]) {
           setOrderClientAddress(Orders[0]);
           const productCodes = Orders[0].OrderDetails.map((item) => item.ProductCode[0]);
+          const productDetails = await Orders[0].OrderDetails.map(item => {
+            return {
+              productCode: item.ProductCode[0],
+              productPrice: item.ProductPrice[0]
+            }
+          });
+          console.log(productDetails, '<< productDetails');
           const productUrls = productCodes.map((code) => `http://localhost:5000/api/products/${code}`);
           const productResponses = await fetchProductData(productUrls);
-          const validVendors = processProductResponses(productResponses);
+          const validVendors = processProductResponses(productResponses, productDetails);
           updateVendorState(validVendors);
           updateOrderListWithVendorCodes(Orders[0].OrderDetails, validVendors);
           processOrderDetails(Orders[0]);
+          setOrderProductDetails(productDetails);
         }
       } catch (error) {
         console.error('Error fetching order data:', error);
@@ -393,10 +403,46 @@ function OrderFreight() {
     
     //   return vendors.filter((vendor) => vendor !== null);
     // };
-    const processProductResponses = (productResponses) => {
+
+
+    const compareProductPrices = (products, orderProductDetails) => {
+      const productPriceMap = {};
+    
+      // Create a lookup map for product prices based on ProductCode
+      products.forEach(product => {
+        const productCode = product.ProductCode[0];
+        const productPrice = product.ProductPrice[0];
+        productPriceMap[productCode] = productPrice;
+      });
+    
+      // Compare the prices
+      const mismatchedPrices = orderProductDetails.filter(orderProduct => {
+        const productCode = orderProduct.productCode;
+        const orderProductPrice = orderProduct.productPrice;
+        const productPrice = productPriceMap[productCode];
+        
+        return productPrice && productPrice !== orderProductPrice;
+      });
+    
+      return mismatchedPrices;
+    };
+
+    const processProductResponses = (productResponses, orderProductDetails) => {
       const vendors = productResponses.map((response) => {
         const { xmldata: { Products } } = response.data;
-        console.log(Products, '<< Products');
+        //console.log(Products, '<< Products');
+        //console.log(orderProductDetails, '<< orderProductDetails');
+        const mismatchedPrices = compareProductPrices(Products, orderProductDetails);
+        //console.log(mismatchedPrices, '<< mismatchedPrices');
+        if (mismatchedPrices.length > 0) {
+          mismatchedPrices.forEach(item => {
+            alert(`Mismatched Prices: Possible added option! Double check manually! ProductCode: ${item.productCode}`);
+          });
+        } else {
+          console.log('All product prices match.');
+        }
+
+        // this we do not use, it was previos version, think to remove it
         if (Products && Products[0] && Products[0].EAN && Products[0].EAN[0]) {
           const kits = Products[0].EAN[0].split(',');
           if (kits[kits.length - 1] === 'extra') {
@@ -424,7 +470,7 @@ function OrderFreight() {
         if (Products && Products.length > 0) {
           const product = Products[0];
           let vendorPartNo = product.Vendor_PartNo[0];
-          
+   
           // Check if ProductCode starts with 'or', 'OR', 'Or', or 'oR'
           const productCode = product.ProductCode[0];
           if (/^or$/i.test(productCode.substring(0, 2))) {

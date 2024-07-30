@@ -881,7 +881,7 @@ function OrderFreightForm({
                           <td>
                             {/* WEBSITE PRICE */}
                             ${ formattedPrice(o.ProductPrice?.[0]) }
-                            
+                            {/* {console.log(JSON.stringify(o), '<< o.ProductPrice?.[0]')} */}
                             {/* {calculatePrice(
                               o.ProductPrice?.[0],
                               o.Quantity?.[0],
