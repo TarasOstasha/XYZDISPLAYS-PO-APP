@@ -1,18 +1,24 @@
-import axios from 'axios'
+import axios from 'axios';
+
 // import { Formik, Form, Field, ErrorMessage } from 'formik'
 import styles from './OrderFreight.module.scss'
 // import * as API from '../../api'
-
+import { Button, Modal } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 // import { ORDER_VALIDATION_SCHEMA } from '../../utils/orderValidationSchema'
 import { useEffect, useState } from 'react'
 
 import { VENDOR_LIST } from '../../utils/vendorsData'
 // import { yellow, descriptionWidth, attension } from '../../stylesConstants'
 import OrderFreightForm from '../OrderFreightForm'
-import AddProductPopUp from '../AddProductPopUp'
+import AddProductPopUp from '../AddProductPopUp';
+import MismatchedPricesModal from './MismatchedPricesModal';
 
 function OrderFreight() {
   let discountRenderFlag = false;
+  const [mismatchedPrices, setMismatchedPrices] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const handleClose = () => setShowModal(false);
 
   const [orderId, setOrderId] = useState('')
 
@@ -436,7 +442,9 @@ function OrderFreight() {
         //console.log(mismatchedPrices, '<< mismatchedPrices');
         if (mismatchedPrices.length > 0) {
           mismatchedPrices.forEach(item => {
-            alert(`Mismatched Prices: Possible added option! Double check manually! ProductCode: ${item.productCode}`);
+            // alert(`Mismatched Prices: Possible added option! Double check manually! ProductCode: ${item.productCode}`);
+            setMismatchedPrices(mismatchedPrices);
+            setShowModal(true);
           });
         } else {
           console.log('All product prices match.');
@@ -491,6 +499,7 @@ function OrderFreight() {
     
       return vendors.filter((vendor) => vendor !== null);
     };
+    
     
     const replaceQuantities = (products, replacements) => {
       products.forEach(product => {
@@ -575,6 +584,28 @@ function OrderFreight() {
         handleFormValuesChange={handleFormValuesChange}
         orderClientAddress={orderClientAddress}
       />
+   
+      <Modal show={showModal} onHide={handleClose} dialogClassName={`${styles.modalBottom} ${styles.modalWarning}`}>
+        <Modal.Header closeButton className={styles.modalHeader}> 
+          <Modal.Title className={styles.modalTitle}>Mismatched Prices</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className={styles.modalBody}>
+          {mismatchedPrices.length > 0 ? (
+            mismatchedPrices.map((item, index) => (
+              <p key={index}>
+                Possible added option! Double check manually! <br /> ProductCode: {item.productCode}
+              </p>
+            ))
+          ) : (
+            <p>All product prices match.</p>
+          )}
+        </Modal.Body>
+        <Modal.Footer className={styles.modalFooter}>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   )
 }
