@@ -6,6 +6,7 @@ import {
   descriptionWidth,
   attension,
   fullWidth,
+  vendoCodeWidth
 } from '../../stylesConstants'
 
 import styles from './OrderFreightForm.module.scss'
@@ -821,7 +822,7 @@ function OrderFreightForm({
                               </>
                             )}
                           </td>
-                          <td>
+                          <td style={vendoCodeWidth}>
                             {isEditing === index || isEditingTop === true ? (
                               <Field
                                 name={`vendorCode[${index}]`}
