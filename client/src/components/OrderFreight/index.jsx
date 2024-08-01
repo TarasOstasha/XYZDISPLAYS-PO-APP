@@ -451,29 +451,29 @@ function OrderFreight() {
         }
 
         // this we do not use, it was previos version, think to remove it
-        if (Products && Products[0] && Products[0].EAN && Products[0].EAN[0]) {
-          const kits = Products[0].EAN[0].split(',');
-          if (kits[kits.length - 1] === 'extra') {
-            alert('Please fill out manually!!!');
-          }
-          const parsedKits = kits.map(item => {
-            const match = item.match(/^(\D+\d+)(?:x(\d+))?$/);
-            return match ? match[1] : item;
-          });
+        // if (Products && Products[0] && Products[0].EAN && Products[0].EAN[0]) {
+        //   const kits = Products[0].EAN[0].split(',');
+        //   if (kits[kits.length - 1] === 'extra') {
+        //     alert('Please fill out manually!!!');
+        //   }
+        //   const parsedKits = kits.map(item => {
+        //     const match = item.match(/^(\D+\d+)(?:x(\d+))?$/);
+        //     return match ? match[1] : item;
+        //   });
     
-          quantityItemObject = kits.reduce((acc, item) => {
-            const match = item.match(/^(\D+\d+)(?:x(\d+))?$/);
-            if (match) {
-              const key = match[1];
-              const quantity = match[2] ? parseInt(match[2], 10) : 1;
-              acc[key] = quantity;
-            }
-            return acc;
-          }, {});
+        //   quantityItemObject = kits.reduce((acc, item) => {
+        //     const match = item.match(/^(\D+\d+)(?:x(\d+))?$/);
+        //     if (match) {
+        //       const key = match[1];
+        //       const quantity = match[2] ? parseInt(match[2], 10) : 1;
+        //       acc[key] = quantity;
+        //     }
+        //     return acc;
+        //   }, {});
     
-          const kitUrls = parsedKits.map((code) => `http://localhost:5000/api/products/${code}`);
-          fetchKitData(kitUrls);
-        }
+        //   const kitUrls = parsedKits.map((code) => `http://localhost:5000/api/products/${code}`);
+        //   fetchKitData(kitUrls);
+        // }
     
         if (Products && Products.length > 0) {
           const product = Products[0];
