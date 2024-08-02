@@ -15,8 +15,8 @@ export const ADD_CUSTOM_PRODUCT = yup.object({
     vendorCode: yup.string().required('vendorCode is required'),
     productName: yup.string().required('productName is required'),
     quantity: yup.number('Quantity must be a number').required(),
-    webPrice: yup.number().typeError('Vendor Price must be a number').required('Vendor Price is required').positive('Vendor Price must be a positive number'),
-    Vendor_Price: yup.number().typeError('Vendor Price must be a number').required('Vendor Price is required').positive('Vendor Price must be a positive number'),
+    webPrice: yup.number().typeError('Vendor Price must be a number').required('Vendor Price is required'), //.positive('Vendor Price must be a positive number'),
+    Vendor_Price: yup.number().typeError('Vendor Price must be a number').required('Vendor Price is required'), //.positive('Vendor Price must be a positive number'),
     discount: yup.number('Please enter discount from 0 to 100').required('discount is required').min(0).max(100)
 });
 
