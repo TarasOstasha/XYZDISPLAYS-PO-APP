@@ -5,18 +5,29 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import styles from './AddOption.module.scss';
 import { ADD_OPTION_SCHEMA } from '../../utils/orderValidationSchema'
+import { saveOption, getOptions } from '../../api';
+
 
 // options_id, product_code, price, quantity, is_default
 function AddOption() {
+
+  const getOptionsFromDB = async () => {
+    console.log('object');
+    const optionsFromDb = await getOptions();
+    console.log(optionsFromDb);
+  }
+
+
+
   const initialValues = {
     options_id: '',
     product_code: '',
     price: '',
     quantity: '',
-    is_default: false
+    is_default: ''
   }
 
-  const onSubmit = (values, formikBag) => {
+  const onSubmit = async (values, formikBag) => {
     //console.log(values, 'values');
 
     const newOption = {
@@ -27,8 +38,9 @@ function AddOption() {
       is_default: values.is_default
     }
 
-
-    formikBag.resetForm()
+    const savedOptionFromDB = await saveOption(newOption);
+    console.log(savedOptionFromDB);
+    formikBag.resetForm();
   }
 
 
@@ -124,7 +136,7 @@ function AddOption() {
                           onChange={formikProps.handleChange}
                           type="text"
                           id="price"
-                          name="productName"
+                          name="price"
                           className={`form-control ${optionPriceClassNames}`}
                           placeholder="Option Price"
                         />
@@ -148,20 +160,19 @@ function AddOption() {
                           component="div"
                         />
                         <Field
+                          as="select"
                           value={formikProps.values.is_default}
-                          type="text"
                           name="is_default"
                           onChange={formikProps.handleChange}
                           id="is_default"
                           className={`form-control ${isOptionDefaultClassNames}`}
-                          placeholder="Web Price"
-                        />
-                        <ErrorMessage
-                          name="is_default"
-                          className={styles.errorDiv}
-                          component="div"
-                        />
-                        <Button type="submit" className="btn btn-success">
+                        >
+                          <option value="">is option default?</option>
+                          <option value="true">True</option>
+                          <option value="false">False</option>
+                        </Field>
+                        <br />
+                        <Button style={{width: '100%'}} type="submit" className="btn btn-success">
                           ADD
                         </Button>
                       </Form>
@@ -170,6 +181,7 @@ function AddOption() {
               </Formik>
             </div>
         </div>
+        <button onClick={() => getOptionsFromDB() }>get option</button>
       <Footer />
     </div>
   )
