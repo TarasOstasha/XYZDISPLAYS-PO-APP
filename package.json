@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "pg": "^8.12.0",
+    "pg-hstore": "^2.3.4",
+    "save-dev": "^0.0.1-security",
+    "sequelize": "^6.37.3",
+    "sequelize-cli": "^6.6.2"
+  }
+}

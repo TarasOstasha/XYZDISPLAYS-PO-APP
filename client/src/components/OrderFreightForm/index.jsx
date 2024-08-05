@@ -6,6 +6,7 @@ import {
   descriptionWidth,
   attension,
   fullWidth,
+  vendoCodeWidth
 } from '../../stylesConstants'
 
 import styles from './OrderFreightForm.module.scss'
@@ -822,7 +823,7 @@ function OrderFreightForm({
                               </>
                             )}
                           </td>
-                          <td>
+                          <td style={vendoCodeWidth}>
                             {isEditing === index || isEditingTop === true ? (
                               <Field
                                 name={`vendorCode[${index}]`}
@@ -882,7 +883,7 @@ function OrderFreightForm({
                           <td>
                             {/* WEBSITE PRICE */}
                             ${ formattedPrice(o.ProductPrice?.[0]) }
-                            
+                            {/* {console.log(JSON.stringify(o), '<< o.ProductPrice?.[0]')} */}
                             {/* {calculatePrice(
                               o.ProductPrice?.[0],
                               o.Quantity?.[0],
@@ -967,7 +968,7 @@ function OrderFreightForm({
                                   o.discount,
                                   o.Quantity?.[0],
                                 )
-                              : ''}
+                              : ''} 
                           </td>
                           <td className={styles.groupedTd}>
                             <button
