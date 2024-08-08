@@ -329,21 +329,53 @@ function OrderFreight() {
     //   .catch((orderError) => {
     //     console.error('Error fetching order data:', orderError);
     //   });
+    // const fetchOrderData = async (orderUrl) => {
+    //   try {
+    //     const orderResponse = await axios.get(orderUrl);
+    //     const { xmldata: { Orders } } = orderResponse.data;
+    //     console.log(Orders[0], '<< Orders');
+        
+    //     if (Orders && Orders[0]) {
+    //       setOrderClientAddress(Orders[0]);
+    //       const productCodes = Orders[0].OrderDetails.map((item) => item.ProductCode[0]);
+    //       const productDetails = await Orders[0].OrderDetails.map(item => {
+    //         return {
+    //           productCode: item.ProductCode[0] || 'UnknownCode',
+    //           productPrice: item.ProductPrice[0] || 'UnknownPrice'
+    //         }
+    //       });
+    //       //console.log(productDetails, '<< productDetails');
+    //       const productUrls = productCodes.map((code) => `http://localhost:5000/api/products/${code}`);
+    //       const productResponses = await fetchProductData(productUrls);
+    //       const validVendors = processProductResponses(productResponses, productDetails);
+    //       updateVendorState(validVendors);
+    //       updateOrderListWithVendorCodes(Orders[0].OrderDetails, validVendors);
+    //       console.log(productResponses, '<< productResponses');
+    //       processOrderDetails(Orders[0]);
+    //       setOrderProductDetails(productDetails);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error fetching order data:', error);
+    //     //alert('Not Found');
+    //   }
+    // };
+    
+    
     const fetchOrderData = async (orderUrl) => {
       try {
         const orderResponse = await axios.get(orderUrl);
         const { xmldata: { Orders } } = orderResponse.data;
-      
+       
         if (Orders && Orders[0]) {
           setOrderClientAddress(Orders[0]);
-          const productCodes = Orders[0].OrderDetails.map((item) => item.ProductCode[0]);
-          const productDetails = await Orders[0].OrderDetails.map(item => {
+          const productCodes = Orders[0].OrderDetails?.map((item) => item.ProductCode?.[0]) || [];
+          const productDetails = Orders[0].OrderDetails?.map(item => {
             return {
-              productCode: item.ProductCode[0],
-              productPrice: item.ProductPrice[0]
+              productCode: item.ProductCode?.[0] || 'UnknownCode',
+              productPrice: item.ProductPrice?.[0] || 'UnknownPrice'
             }
-          });
-          console.log(productDetails, '<< productDetails');
+          }) || [];
+    
           const productUrls = productCodes.map((code) => `http://localhost:5000/api/products/${code}`);
           const productResponses = await fetchProductData(productUrls);
           const validVendors = processProductResponses(productResponses, productDetails);
@@ -354,8 +386,10 @@ function OrderFreight() {
         }
       } catch (error) {
         console.error('Error fetching order data:', error);
+        //alert('Not Found');
       }
     };
+    
     
     const fetchProductData = async (productUrls) => {
       try {
@@ -580,6 +614,7 @@ function OrderFreight() {
         setVendorAddress={handleVendorAddressChange}
         setShipInfoDescription={handleVendorShipInfoDescription}
         setCustomFieldInHand={customFieldInHand}
+        setCustomFieldInHand1={setCustomFieldInHand}
         setOrderComments={orderComments}
         handleFormValuesChange={handleFormValuesChange}
         orderClientAddress={orderClientAddress}

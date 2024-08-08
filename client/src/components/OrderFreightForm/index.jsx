@@ -38,6 +38,7 @@ function OrderFreightForm({
   setVendorAddress,
   setShipInfoDescription,
   setCustomFieldInHand,
+  setCustomFieldInHand1,
   setOrderComments,
   handleFormValuesChange,
   orderClientAddress
@@ -193,6 +194,7 @@ function OrderFreightForm({
   // render shipping info input
   const renderShipInfoInput = () => {
     const pcode = rerenderOrderList[0]?.ProductCode[0].toLowerCase();
+    console.log(pcode, '<< pcode renderShipInfoInput');
     return rerenderOrderList && rerenderOrderList.length > 0 &&
       VENDOR_LIST.find(vendor =>
         pcode?.startsWith(vendor.code),
@@ -219,6 +221,7 @@ function OrderFreightForm({
   // render vendor shipping address section
   const renderVendorAddress = () => {
     const pcode = rerenderOrderList[0]?.ProductCode[0].toLowerCase();
+    console.log(pcode);
     return rerenderOrderList && rerenderOrderList.length > 0 &&
       VENDOR_LIST.find(vendor =>
         //rerenderOrderList[0]?.ProductCode[0]?.startsWith(vendor.code),
@@ -348,7 +351,8 @@ function OrderFreightForm({
                               style={{ background: 'yellow' }}
                               name="ship"
                               type="text"
-                              value={formikProps.values.ship || renderShipInfoInput()}
+                              value={renderShipInfoInput()}
+                              // value={formikProps.values.ship || renderShipInfoInput()}
                               onChange={formikProps.handleChange}
                               className="form-control"
                               placeholder="Choose freight info, example Freight"
@@ -370,7 +374,11 @@ function OrderFreightForm({
                               type="string" 
                               //value={formikProps.values.inHand}
                               value={setCustomFieldInHand}
-                              onChange={formikProps.handleChange}
+                              //onChange={formikProps.handleChange}
+                              onChange={(e) => {
+                                formikProps.handleChange(e);
+                                setCustomFieldInHand1(e.target.value);
+                              }}
                               className="form-control"
                               aria-label="inHand"
                               aria-describedby="basic-addon1"

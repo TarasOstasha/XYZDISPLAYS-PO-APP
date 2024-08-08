@@ -1,22 +1,25 @@
 module.exports.emailTemplate = (vendorAddress, po, date, ship, shipInfoDescription, inHand, shipTo, orderNotes) => {
-    // format Ship To Address
+    // Format Ship To Address
     const lines = shipTo.trim().split('\n');
     const formattedShipTo = lines.slice(0, lines.length - 1).map(line => line.trim()).join('<br>') + (lines.length > 1 ? '<br>' + lines[lines.length - 1].trim() : '');
-    // format  Vendor address
+    
+    // Format Vendor Address
     const formattedVendorAddress = vendorAddress.split('\n').map(line => line.trim()).join('<br>');
+    
+    // Format Current Date
     const currentDate = new Date();
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const formattedDate = currentDate.toLocaleDateString('en-US', options);
+    
     return `
         <table style="width: 100%;">
             <tr>
-                <td>
-                    <!-- first table : BEGIN -->
+                <td style="width: 50%; vertical-align: top;">
+                    <!-- Customer and Vendor table : BEGIN -->
                     <table style="width: 100%;">
                         <tbody>
                             <tr>
                                 <td style="background:rgb(148, 146, 141);font-weight:bold;border: 2px solid;">Customer</td>
-                                <td ></td>
                             </tr>
                             <tr>
                                 <td style="border: 2px solid;">
@@ -26,6 +29,7 @@ module.exports.emailTemplate = (vendorAddress, po, date, ship, shipInfoDescripti
                                     973-515-5151 <br>
                                     sales@xyzDisplays.com <br>
                                 </td>
+                            </tr>
                             <tr>
                                 <td style="height: 24px;"></td>
                             </tr>
@@ -39,10 +43,10 @@ module.exports.emailTemplate = (vendorAddress, po, date, ship, shipInfoDescripti
                             </tr>
                         </tbody>
                     </table>
-                    <!-- first table : END -->
+                    <!-- Customer and Vendor table : END -->
                 </td>
-                <td>
-                <!-- second table : BEGIN -->
+                <td style="width: 50%; vertical-align: top;">
+                    <!-- P.O. and Ship To table : BEGIN -->
                     <table style="width: 100%;">
                         <tbody>
                             <tr>
@@ -76,7 +80,7 @@ module.exports.emailTemplate = (vendorAddress, po, date, ship, shipInfoDescripti
                             </tr>
                         </tbody>
                     </table>
-                <!-- second table : END -->
+                    <!-- P.O. and Ship To table : END -->
                 </td>
             </tr>
         </table>
@@ -90,5 +94,5 @@ module.exports.emailTemplate = (vendorAddress, po, date, ship, shipInfoDescripti
                 </tr>
             </tbody>
         </table>
-    `
+    `;
 }
