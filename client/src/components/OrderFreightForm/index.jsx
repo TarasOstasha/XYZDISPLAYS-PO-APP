@@ -194,7 +194,6 @@ function OrderFreightForm({
   // render shipping info input
   const renderShipInfoInput = () => {
     const pcode = rerenderOrderList[0]?.ProductCode[0].toLowerCase();
-    console.log(pcode, '<< pcode renderShipInfoInput');
     return rerenderOrderList && rerenderOrderList.length > 0 &&
       VENDOR_LIST.find(vendor =>
         pcode?.startsWith(vendor.code),
@@ -221,7 +220,6 @@ function OrderFreightForm({
   // render vendor shipping address section
   const renderVendorAddress = () => {
     const pcode = rerenderOrderList[0]?.ProductCode[0].toLowerCase();
-    console.log(pcode);
     return rerenderOrderList && rerenderOrderList.length > 0 &&
       VENDOR_LIST.find(vendor =>
         //rerenderOrderList[0]?.ProductCode[0]?.startsWith(vendor.code),

@@ -583,9 +583,11 @@ function OrderFreight() {
     };
     
     const processOrderDetails = (order) => {
-      const customFieldInHandDate = order.Custom_Field_InHand[0];
-      const orderComments = order.Order_Comments[0];
-    
+
+      //const customFieldInHandDate = order.Custom_Field_InHand[0];
+      //const orderComments = order.Order_Comments[0];
+      const customFieldInHandDate = order.Custom_Field_InHand && order.Custom_Field_InHand[0] ? order.Custom_Field_InHand[0] : "Not Found";
+      const orderComments = order.Order_Comments && order.Order_Comments[0] ? order.Order_Comments[0] : "Not Found";
       setCustomFieldInHand(customFieldInHandDate);
       setOrderComments(orderComments);
     };
