@@ -8,7 +8,7 @@ import {
   fullWidth,
   vendoCodeWidth
 } from '../../stylesConstants'
-
+import React from 'react';
 import styles from './OrderFreightForm.module.scss'
 import { useState, useEffect } from 'react'
 import AddProductPopUp from '../AddProductPopUp'
@@ -276,7 +276,14 @@ function OrderFreightForm({
     return ratio > 0.9 || ratio < 0.3;
   };
   
-  
+  const grandTotalPrice = (order, switcher,discount) => {
+    const grandTotal = order.reduce((acc, item) => {
+      const price = switcher ? item.ProductPrice?.[0] : item.Vendor_Price?.[0]* (100-item.discount)/100;
+      return acc + (item.Quantity?.[0] * price); //ProductPrice?.[0]
+    }, 0);
+    return '$' + grandTotal.toFixed(2); // return the total rounded to two decimal places
+    
+  };
 
   return (
     <div>
@@ -561,163 +568,178 @@ function OrderFreightForm({
                   <>
                     {filteredOrderList.length !== 0 &&
                       filteredOrderList.map((o, index) => (
-                        <tr key={index}>
-                          <td>
-                            {isEditing === index || isEditingTop === true ? (
-                              <Field
-                                name={`productCode[${index}]`}
-                                value={
-                                  formikProps.values.productCode[index] || ''
-                                }
-                                onChange={formikProps.handleChange}
-                                type="text"
-                                className={styles.regSizeInput}
-                              />
-                            ) : (
-                              <span>{o.ProductCode?.[0]}</span>
-                            )}
-                          </td>
-                          <td>
-                            {isEditing === index || isEditingTop === true ? (
-                              <Field
-                                name={`vendorCode[${index}]`}
-                                value={
-                                  formikProps.values.vendorCode[index] || ''
-                                }
-                                onChange={formikProps.handleChange}
-                                type="text"
-                                className={styles.regSizeInput}
-                              />
-                            ) : (
-                              <span>{o.Vendor_PartNo?.[0]}</span>
-                            )}
-                          </td>
-                          <td style={descriptionWidth}>
-                            {isEditing === index || isEditingTop === true ? (
-                              <Field
-                                name={`productName[${index}]`}
-                                value={
-                                  formikProps.values.productName[index] || ''
-                                }
-                                onChange={formikProps.handleChange}
-                                type="text"
-                                className={styles.productNameInput}
-                              />
-                            ) : (
-                              <span>{o.ProductName?.[0]}</span>
-                            )}
-                          </td>
-                          <td>
-                            {isEditing === index || isEditingTop === true ? (
-                              <Field
-                                name={`productQuantity[${index}]`}
-                                value={
-                                  formikProps.values.productQuantity[index] ||
-                                  ''
-                                }
-                                onChange={formikProps.handleChange}
-                                onClick={(e) =>
-                                  handleChangeInput(e, index, formikProps)
-                                }
-                                type="number"
-                                className={styles.quantityInput}
-                              />
-                            ) : (
-                              <span>{o.Quantity?.[0]}</span>
-                            )}
-                          </td>
-                          <td>
-                            {/* WEBSITE PRICE */}
-                            {calculatePrice(
-                              o.ProductPrice?.[0],
-                              o.Quantity?.[0],
-                            )}
-                          </td>
-                          <td>
-                            {/* VENDOR COST */}
-                            {(isEditing === index &&
-                              !isNumber(o.Vendor_Price?.[0])) ||
-                            isEditingTop === true ? (
-                              <Field
-                                name={`vendorPrice[${index}]`}
-                                value={
-                                  formikProps.values.vendorPrice[index] || ''
-                                }
-                                onChange={formikProps.handleChange}
-                                type="text"
-                                className={styles.regSizeInput}
-                                id={`vendorPrice[${index}]`}
-                              />
-                            ) : (
-                              <span>
-                                {isNumber(o.Vendor_Price?.[0]) ? (
-                                  <b style={attension}>Website order item</b>
-                                ) : (
-                                  (() => {
-                                    return calculatePrice(
-                                      o.Vendor_Price?.[0],
-                                      o.Quantity?.[0],
-                                    )
-                                  })()
-                                )}
-                              </span>
-                            )}
-                          </td>
-                          <td>
-                            {/* DISCOUNT */}
-                            {isEditingTop === true ? (
-                              <Field
-                                name={`productDiscount[${index}]`}
-                                value={
-                                  formikProps.values.productDiscount[index] ||
-                                  ''
-                                }
-                                onChange={formikProps.handleChange}
-                                // onClick={(e) => handleChangeInput(e, index, formikProps)}
-                                type="text"
-                                className={styles.regSizeInput}
-                                id={`productDiscount[${index}]`}
-                              />
-                            ) : (
-                              discountAmount(o.discount)
-                            )}
-                          </td>
-                          <td>
-                            {/* VENDOR PRICE WITH DISCOUNT */}
-                            {isNumber(o.Vendor_Price?.[0]) ||
-                            isNumber(o.discount) ? (
-                              <b style={attension}>Website order item</b>
-                            ) : (
-                              calculateDiscountedPrice(
-                                o.Vendor_Price?.[0],
-                                o.discount,
+                        <React.Fragment>
+                          <tr key={index}>
+                            <td>
+                              {isEditing === index || isEditingTop === true ? (
+                                <Field
+                                  name={`productCode[${index}]`}
+                                  value={
+                                    formikProps.values.productCode[index] || ''
+                                  }
+                                  onChange={formikProps.handleChange}
+                                  type="text"
+                                  className={styles.regSizeInput}
+                                />
+                              ) : (
+                                <span>{o.ProductCode?.[0]}</span>
+                              )}
+                            </td>
+                            <td>
+                              {isEditing === index || isEditingTop === true ? (
+                                <Field
+                                  name={`vendorCode[${index}]`}
+                                  value={
+                                    formikProps.values.vendorCode[index] || ''
+                                  }
+                                  onChange={formikProps.handleChange}
+                                  type="text"
+                                  className={styles.regSizeInput}
+                                />
+                              ) : (
+                                <span>{o.Vendor_PartNo?.[0]}</span>
+                              )}
+                            </td>
+                            <td style={descriptionWidth}>
+                              {isEditing === index || isEditingTop === true ? (
+                                <Field
+                                  name={`productName[${index}]`}
+                                  value={
+                                    formikProps.values.productName[index] || ''
+                                  }
+                                  onChange={formikProps.handleChange}
+                                  type="text"
+                                  className={styles.productNameInput}
+                                />
+                              ) : (
+                                <span>{o.ProductName?.[0]}</span>
+                              )}
+                            </td>
+                            <td>
+                              {isEditing === index || isEditingTop === true ? (
+                                <Field
+                                  name={`productQuantity[${index}]`}
+                                  value={
+                                    formikProps.values.productQuantity[index] ||
+                                    ''
+                                  }
+                                  onChange={formikProps.handleChange}
+                                  onClick={(e) =>
+                                    handleChangeInput(e, index, formikProps)
+                                  }
+                                  type="number"
+                                  className={styles.quantityInput}
+                                />
+                              ) : (
+                                <span>{o.Quantity?.[0]}</span>
+                              )}
+                            </td>
+                            <td>
+                              {/* WEBSITE PRICE */}
+                              {calculatePrice(
+                                o.ProductPrice?.[0],
                                 o.Quantity?.[0],
-                              )
-                            )}
-                          </td>
-                          <td>
-                            {o.Vendor_Price?.[0] &&
-                            o.discount &&
-                            o.Quantity?.[0]
-                              ? calculateDiscountedPrice(
+                              )}
+                            </td>
+                            <td>
+                              {/* VENDOR COST */}
+                              {(isEditing === index &&
+                                !isNumber(o.Vendor_Price?.[0])) ||
+                              isEditingTop === true ? (
+                                <Field
+                                  name={`vendorPrice[${index}]`}
+                                  value={
+                                    formikProps.values.vendorPrice[index] || ''
+                                  }
+                                  onChange={formikProps.handleChange}
+                                  type="text"
+                                  className={styles.regSizeInput}
+                                  id={`vendorPrice[${index}]`}
+                                />
+                              ) : (
+                                <span>
+                                  {isNumber(o.Vendor_Price?.[0]) ? (
+                                    <b style={attension}>Website order item</b>
+                                  ) : (
+                                    (() => {
+                                      return calculatePrice(
+                                        o.Vendor_Price?.[0],
+                                        o.Quantity?.[0],
+                                      )
+                                    })()
+                                  )}
+                                </span>
+                              )}
+                            </td>
+                            <td>
+                              {/* DISCOUNT */}
+                              {isEditingTop === true ? (
+                                <Field
+                                  name={`productDiscount[${index}]`}
+                                  value={
+                                    formikProps.values.productDiscount[index] ||
+                                    ''
+                                  }
+                                  onChange={formikProps.handleChange}
+                                  // onClick={(e) => handleChangeInput(e, index, formikProps)}
+                                  type="text"
+                                  className={styles.regSizeInput}
+                                  id={`productDiscount[${index}]`}
+                                />
+                              ) : (
+                                discountAmount(o.discount)
+                              )}
+                            </td>
+                            <td>
+                              {/* VENDOR PRICE WITH DISCOUNT */}
+                              {isNumber(o.Vendor_Price?.[0]) ||
+                              isNumber(o.discount) ? (
+                                <b style={attension}>Website order item</b>
+                              ) : (
+                                calculateDiscountedPrice(
                                   o.Vendor_Price?.[0],
                                   o.discount,
                                   o.Quantity?.[0],
                                 )
-                              : ''}
-                          </td>
-                          <td className={styles.groupedTd}>
-                            <button
-                              onClick={() =>
-                                handleToRemove(index, rerenderOrderList)
-                              }
-                              type="button"
-                              className="btn btn-danger"
-                            >
-                              Remove
-                            </button>
-                          </td>
-                        </tr>
+                              )}
+                            </td>
+                            <td>
+                              {o.Vendor_Price?.[0] &&
+                              o.discount &&
+                              o.Quantity?.[0]
+                                ? calculateDiscountedPrice(
+                                    o.Vendor_Price?.[0],
+                                    o.discount,
+                                    o.Quantity?.[0],
+                                  )
+                                : ''}
+                            </td>
+                            <td className={styles.groupedTd}>
+                              <button
+                                onClick={() =>
+                                  handleToRemove(index, rerenderOrderList)
+                                }
+                                type="button"
+                                className="btn btn-danger"
+                              >
+                                Remove
+                              </button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Total Web</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Total Vendor</td>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                        </React.Fragment>
                       ))}
                   </>
                   {/* MAIN TABLE */}
@@ -725,282 +747,298 @@ function OrderFreightForm({
                     {rerenderOrderList.length !== 0 &&
                       filteredOrderList.length === 0 &&
                       rerenderOrderList.map((o, index) => (
-                        <tr key={index}>
-                          {checkByVendor && (
+                        <React.Fragment key={index}>
+                          <tr >
+                            {checkByVendor && (
+                              <td>
+                                <label>
+                                  {/* <Field type="checkbox"  name={`selectedItems[${index}]`}/> */}
+                                  <Field
+                                    type="checkbox"
+                                    name={formikProps.values.productCode}
+                                    checked={
+                                      formikProps.values.selectedItems[index] ||
+                                      false
+                                    }
+                                    onChange={({ target: { checked } }) => {
+                                      const newSelectedItems = [
+                                        ...formikProps.values.selectedItems,
+                                      ]
+                                      newSelectedItems[index] = checked
+                                      formikProps.setFieldValue(
+                                        `selectedItems`,
+                                        newSelectedItems,
+                                      )
+                                      // find indexes with true value
+                                      const trueIndices = newSelectedItems.reduce(
+                                        (indices, value, index) => {
+                                          if (value) {
+                                            indices.push(index)
+                                          }
+                                          return indices
+                                        },
+                                        [],
+                                      )
+                                      setCheckboxFilteredIndex(trueIndices)
+                                      const choosenItems = rerenderOrderList.filter(
+                                        (_, index) => trueIndices.includes(index),
+                                      )
+                                      if (choosenItems.length !== 0) {
+                                        const selectedVendor = VENDOR_LIST.find(
+                                          (vendor) =>
+                                            choosenItems[0]?.ProductCode?.[0].startsWith(
+                                              vendor.code,
+                                            ),
+                                        )
+                                        formikProps.setFieldValue('vendorAddress',selectedVendor.address)
+                                        formikProps.setFieldValue('shipInfoDescription',selectedVendor.shipInfoDescription)
+                                        formikProps.setFieldValue('ship',selectedVendor.shipInfo)
+                                        formikProps.setFieldValue('productTableData',choosenItems)
+                                        formikProps.setFieldValue('vendorEmails',selectedVendor.email)
+                                      } else {
+                                        formikProps.setFieldValue(
+                                          'vendorAddress',
+                                          '',
+                                        )
+                                        formikProps.setFieldValue(
+                                          'shipInfoDescription',
+                                          '',
+                                        )
+                                        formikProps.setFieldValue('ship', '')
+                                      }
+                                      if (
+                                        checkNextNotStartsWithTwoSameLetters(
+                                          choosenItems,
+                                        ) == true
+                                      ) {
+                                        alert(
+                                          'Vendors are not the same! Please select same vendors to set shipiing address!',
+                                        )
+                                        const updatedSelectedItems = Array(
+                                          rerenderOrderList.length,
+                                        ).fill(false)
+                                        formikProps.setFieldValue(
+                                          'selectedItems',
+                                          updatedSelectedItems,
+                                        )
+                                        formikProps.setFieldValue(
+                                          'vendorAddress',
+                                          '',
+                                        )
+                                      }
+                                    }}
+                                  />
+                                </label>
+                              </td>
+                            )}
                             <td>
-                              <label>
-                                {/* <Field type="checkbox"  name={`selectedItems[${index}]`}/> */}
+                              {isEditing === index || isEditingTop === true ? (
                                 <Field
-                                  type="checkbox"
-                                  name={formikProps.values.productCode}
-                                  checked={
-                                    formikProps.values.selectedItems[index] ||
-                                    false
+                                  name={`productCode[${index}]`}
+                                  value={
+                                    formikProps.values.productCode[index] || ''
                                   }
-                                  onChange={({ target: { checked } }) => {
-                                    const newSelectedItems = [
-                                      ...formikProps.values.selectedItems,
-                                    ]
-                                    newSelectedItems[index] = checked
-                                    formikProps.setFieldValue(
-                                      `selectedItems`,
-                                      newSelectedItems,
-                                    )
-                                    // find indexes with true value
-                                    const trueIndices = newSelectedItems.reduce(
-                                      (indices, value, index) => {
-                                        if (value) {
-                                          indices.push(index)
-                                        }
-                                        return indices
-                                      },
-                                      [],
-                                    )
-                                    setCheckboxFilteredIndex(trueIndices)
-                                    const choosenItems = rerenderOrderList.filter(
-                                      (_, index) => trueIndices.includes(index),
-                                    )
-                                    if (choosenItems.length !== 0) {
-                                      const selectedVendor = VENDOR_LIST.find(
-                                        (vendor) =>
-                                          choosenItems[0]?.ProductCode?.[0].startsWith(
-                                            vendor.code,
-                                          ),
-                                      )
-                                      formikProps.setFieldValue('vendorAddress',selectedVendor.address)
-                                      formikProps.setFieldValue('shipInfoDescription',selectedVendor.shipInfoDescription)
-                                      formikProps.setFieldValue('ship',selectedVendor.shipInfo)
-                                      formikProps.setFieldValue('productTableData',choosenItems)
-                                      formikProps.setFieldValue('vendorEmails',selectedVendor.email)
-                                    } else {
-                                      formikProps.setFieldValue(
-                                        'vendorAddress',
-                                        '',
-                                      )
-                                      formikProps.setFieldValue(
-                                        'shipInfoDescription',
-                                        '',
-                                      )
-                                      formikProps.setFieldValue('ship', '')
-                                    }
-                                    if (
-                                      checkNextNotStartsWithTwoSameLetters(
-                                        choosenItems,
-                                      ) == true
-                                    ) {
-                                      alert(
-                                        'Vendors are not the same! Please select same vendors to set shipiing address!',
-                                      )
-                                      const updatedSelectedItems = Array(
-                                        rerenderOrderList.length,
-                                      ).fill(false)
-                                      formikProps.setFieldValue(
-                                        'selectedItems',
-                                        updatedSelectedItems,
-                                      )
-                                      formikProps.setFieldValue(
-                                        'vendorAddress',
-                                        '',
-                                      )
-                                    }
+                                  onChange={formikProps.handleChange}
+                                  onClick={(e) => {
+                                    handleChangeInput(e, index, formikProps)
                                   }}
+                                  type="text"
+                                  className={styles.regSizeInput}
+                                  id={`productCode[${index}]`}
                                 />
-                              </label>
+                              ) : (
+                                <>
+                                  <span>{o.ProductCode?.[0]}</span>
+                                </>
+                              )}
                             </td>
-                          )}
-                          <td>
-                            {isEditing === index || isEditingTop === true ? (
-                              <Field
-                                name={`productCode[${index}]`}
-                                value={
-                                  formikProps.values.productCode[index] || ''
-                                }
-                                onChange={formikProps.handleChange}
-                                onClick={(e) => {
-                                  handleChangeInput(e, index, formikProps)
-                                }}
-                                type="text"
-                                className={styles.regSizeInput}
-                                id={`productCode[${index}]`}
-                              />
-                            ) : (
-                              <>
-                                <span>{o.ProductCode?.[0]}</span>
-                              </>
-                            )}
-                          </td>
-                          <td style={vendoCodeWidth}>
-                            {isEditing === index || isEditingTop === true ? (
-                              <Field
-                                name={`vendorCode[${index}]`}
-                                value={
-                                  formikProps.values.vendorCode[index] || ''
-                                }
-                                onChange={formikProps.handleChange}
-                                onClick={(e) =>
-                                  handleChangeInput(e, index, formikProps)
-                                }
-                                type="text"
-                                className={styles.regSizeInput}
-                              />
-                            ) : (
-                              <span>{o.Vendor_PartNo?.[0]}</span>
-                            )}
-                          </td>
-                          <td style={descriptionWidth}>
-                            {isEditing === index || isEditingTop === true ? (
-                              <Field
-                                name={`productName[${index}]`}
-                                value={
-                                  formikProps.values.productName[index] || ''
-                                }
-                                onChange={formikProps.handleChange}
-                                onClick={(e) =>
-                                  handleChangeInput(e, index, formikProps)
-                                }
-                                type="text"
-                                className={styles.productNameInput}
-                                id={`productName[${index}]`}
-                              />
-                            ) : (
-                              <span>{o.ProductName?.[0]}</span>
-                            )}
-                          </td>
-                          <td>
-                            {isEditing === index || isEditingTop === true ? (
-                              <Field
-                                name={`productQuantity[${index}]`}
-                                value={
-                                  formikProps.values.productQuantity[index] ||
-                                  ''
-                                }
-                                onChange={formikProps.handleChange}
-                                onClick={(e) =>
-                                  handleChangeInput(e, index, formikProps)
-                                }
-                                type="number"
-                                className={styles.quantityInput}
-                                id={`productQuantity[${index}]`}
-                              />
-                            ) : (
-                              <span>{o.Quantity?.[0]}</span>
-                            )}
-                          </td>
-                          <td>
-                            {/* WEBSITE PRICE */}
-                            ${ formattedPrice(o.ProductPrice?.[0]) }
-                            {/* {console.log(JSON.stringify(o), '<< o.ProductPrice?.[0]')} */}
-                            {/* {calculatePrice(
-                              o.ProductPrice?.[0],
-                              o.Quantity?.[0],
-                            )} */}
-                          </td>
-                          <td>
-                            {/* VENDOR COST */}
-                            {(isEditing === index &&
-                              !isNumber(o.Vendor_Price?.[0])) ||
-                            isEditingTop === true ? (
-                              <Field
-                                name={`vendorPrice[${index}]`}
-                                value={
-                                  formikProps.values.vendorPrice[index] || ''
-                                }
-                                onChange={formikProps.handleChange}
-                                onClick={(e) =>
-                                  handleChangeInput(e, index, formikProps)
-                                }
-                                type="text"
-                                className={styles.regSizeInput}
-                                id={`vendorPrice[${index}]`}
-                              />
-                            ) : (
-                              <span>
-                                {isNumber(o.Vendor_Price?.[0])
-                                  ? (() => {
-                                      ;<b style={attension}>
-                                        Website order item
-                                      </b>
-                                    })()
-                                  : formattedPrice(o.Vendor_Price?.[0])  
-                                  // : calculatePrice(
-                                  //     o.Vendor_Price?.[0],
-                                  //     o.Quantity?.[0],
-                                  //   )
-                                  }{' '}
-                              </span>
-                            )}
-                          </td>
-                          <td>
-                            {/* DISCOUNT */}
-                            {o.ProductCode[0].toLowerCase().startsWith('or') ? setIsNeededDiscountNotes(true) : setIsNeededDiscountNotes(false)}
-                            {isEditingTop === true ? (
-                              <Field
-                                name={`productDiscount[${index}]`}
-                                value={
-                                  formikProps.values.productDiscount[index] || ''
-                                }
-                                onChange={formikProps.handleChange}
-                                onClick={(e) =>
-                                  handleChangeInput(e, index, formikProps)
-                                }
-                                type="text"
-                                className={styles.regSizeInput}
-                                id={`productDiscount[${index}]`}
-                              />
-                            ) : (
-                              discountAmount(o.discount)
-                            )}
-                          </td>
-                          <td>
-                            {/* VENDOR PRICE WITH DISCOUNT */}
-                            {isNumber(o.Vendor_Price?.[0]) ||
-                            isNumber(o.discount) ? (
-                              <b style={attension}>Website order item</b>
-                            ) : (
-                              priceWithDiscountPerUnit(o.Vendor_Price?.[0], o.discount)
-                              // calculateDiscountedPrice(
-                              //   o.Vendor_Price?.[0],
-                              //   o.discount,
-                              //   o.Quantity?.[0],
-                              // )
-                            )}
-                          </td>
-                          <td>
-                            {o.Vendor_Price?.[0] &&
-                            o.discount &&
-                            o.Quantity?.[0]
-                              ? calculateDiscountedPrice(
-                                  o.Vendor_Price?.[0],
-                                  o.discount,
-                                  o.Quantity?.[0],
-                                )
-                              : ''} 
-                          </td>
-                          <td className={styles.groupedTd}>
-                            <button
-                              onClick={() =>
-                                handleToRemove(index, rerenderOrderList)
-                              }
-                              type="button"
-                              className="btn btn-danger"
-                            >
-                              Remove
-                            </button>
-                          </td>
-                          {isPriceOutOfRange(formattedPrice(o.ProductPrice?.[0]), priceWithDiscountPerUnit(o.Vendor_Price?.[0], o.discount)) && (
+                            <td style={vendoCodeWidth}>
+                              {isEditing === index || isEditingTop === true ? (
+                                <Field
+                                  name={`vendorCode[${index}]`}
+                                  value={
+                                    formikProps.values.vendorCode[index] || ''
+                                  }
+                                  onChange={formikProps.handleChange}
+                                  onClick={(e) =>
+                                    handleChangeInput(e, index, formikProps)
+                                  }
+                                  type="text"
+                                  className={styles.regSizeInput}
+                                />
+                              ) : (
+                                <span>{o.Vendor_PartNo?.[0]}</span>
+                              )}
+                            </td>
+                            <td style={descriptionWidth}>
+                              {isEditing === index || isEditingTop === true ? (
+                                <Field
+                                  name={`productName[${index}]`}
+                                  value={
+                                    formikProps.values.productName[index] || ''
+                                  }
+                                  onChange={formikProps.handleChange}
+                                  onClick={(e) =>
+                                    handleChangeInput(e, index, formikProps)
+                                  }
+                                  type="text"
+                                  className={styles.productNameInput}
+                                  id={`productName[${index}]`}
+                                />
+                              ) : (
+                                <span>{o.ProductName?.[0]}</span>
+                              )}
+                            </td>
                             <td>
-                              <span className={styles.rangeText}>
-                                {formattedPrice(o.ProductPrice?.[0]) / priceWithDiscountPerUnit(o.Vendor_Price?.[0], o.discount) < 0.9 && formattedPrice(o.ProductPrice?.[0]) / priceWithDiscountPerUnit(o.Vendor_Price?.[0], o.discount) > 0.3 ? "Price in Range" : "Price is Out of Range"}
-                              </span>
-                              <MarkupAmount />
+                              {isEditing === index || isEditingTop === true ? (
+                                <Field
+                                  name={`productQuantity[${index}]`}
+                                  value={
+                                    formikProps.values.productQuantity[index] ||
+                                    ''
+                                  }
+                                  onChange={formikProps.handleChange}
+                                  onClick={(e) =>
+                                    handleChangeInput(e, index, formikProps)
+                                  }
+                                  type="number"
+                                  className={styles.quantityInput}
+                                  id={`productQuantity[${index}]`}
+                                />
+                              ) : (
+                                <span>{o.Quantity?.[0]}</span>
+                              )}
                             </td>
-                          )}
-                        </tr>
+                            <td>
+                              {/* WEBSITE PRICE */}
+                              ${ formattedPrice(o.ProductPrice?.[0]) }
+                              {/* {console.log(JSON.stringify(o), '<< o.ProductPrice?.[0]')} */}
+                              {/* {calculatePrice(
+                                o.ProductPrice?.[0],
+                                o.Quantity?.[0],
+                              )} */}
+                            </td>
+                            <td>
+                              {/* VENDOR COST */}
+                              {(isEditing === index &&
+                                !isNumber(o.Vendor_Price?.[0])) ||
+                              isEditingTop === true ? (
+                                <Field
+                                  name={`vendorPrice[${index}]`}
+                                  value={
+                                    formikProps.values.vendorPrice[index] || ''
+                                  }
+                                  onChange={formikProps.handleChange}
+                                  onClick={(e) =>
+                                    handleChangeInput(e, index, formikProps)
+                                  }
+                                  type="text"
+                                  className={styles.regSizeInput}
+                                  id={`vendorPrice[${index}]`}
+                                />
+                              ) : (
+                                <span>
+                                  {isNumber(o.Vendor_Price?.[0])
+                                    ? (() => {
+                                        ;<b style={attension}>
+                                          Website order item
+                                        </b>
+                                      })()
+                                    : formattedPrice(o.Vendor_Price?.[0])  
+                                    // : calculatePrice(
+                                    //     o.Vendor_Price?.[0],
+                                    //     o.Quantity?.[0],
+                                    //   )
+                                    }{' '}
+                                </span>
+                              )}
+                            </td>
+                            <td>
+                              {/* DISCOUNT */}
+                              {o.ProductCode[0].toLowerCase().startsWith('or') ? setIsNeededDiscountNotes(true) : setIsNeededDiscountNotes(false)}
+                              {isEditingTop === true ? (
+                                <Field
+                                  name={`productDiscount[${index}]`}
+                                  value={
+                                    formikProps.values.productDiscount[index] || ''
+                                  }
+                                  onChange={formikProps.handleChange}
+                                  onClick={(e) =>
+                                    handleChangeInput(e, index, formikProps)
+                                  }
+                                  type="text"
+                                  className={styles.regSizeInput}
+                                  id={`productDiscount[${index}]`}
+                                />
+                              ) : (
+                                discountAmount(o.discount)
+                              )}
+                            </td>
+                            <td>
+                              {/* VENDOR PRICE WITH DISCOUNT */}
+                              {isNumber(o.Vendor_Price?.[0]) ||
+                              isNumber(o.discount) ? (
+                                <b style={attension}>Website order item</b>
+                              ) : (
+                                priceWithDiscountPerUnit(o.Vendor_Price?.[0], o.discount)
+                                // calculateDiscountedPrice(
+                                //   o.Vendor_Price?.[0],
+                                //   o.discount,
+                                //   o.Quantity?.[0],
+                                // )
+                              )}
+                            </td>
+                            <td>
+                              {o.Vendor_Price?.[0] &&
+                              o.discount &&
+                              o.Quantity?.[0]
+                                ? calculateDiscountedPrice(
+                                    o.Vendor_Price?.[0],
+                                    o.discount,
+                                    o.Quantity?.[0],
+                                  )
+                                : ''} 
+                            </td>
+                            <td className={styles.groupedTd}>
+                              <button
+                                onClick={() =>
+                                  handleToRemove(index, rerenderOrderList)
+                                }
+                                type="button"
+                                className="btn btn-danger"
+                              >
+                                Remove
+                              </button>
+                            </td>
+                            {isPriceOutOfRange(formattedPrice(o.ProductPrice?.[0]), priceWithDiscountPerUnit(o.Vendor_Price?.[0], o.discount)) && (
+                              <td>
+                                <span className={styles.rangeText}>
+                                  {formattedPrice(o.ProductPrice?.[0]) / priceWithDiscountPerUnit(o.Vendor_Price?.[0], o.discount) < 0.9 && formattedPrice(o.ProductPrice?.[0]) / priceWithDiscountPerUnit(o.Vendor_Price?.[0], o.discount) > 0.3 ? "Price in Range" : "Price is Out of Range"}
+                                </span>
+                                <MarkupAmount />
+                              </td>
+                            )}
+                          </tr>
+
+                        </React.Fragment>
                       ))}
+                    <tr>
+                        <td colSpan="4"></td>
+                        <td>Total Web</td>
+                        <td colSpan="3"></td>
+                        <td>Total Vendor</td>
+                        <td colSpan="2"></td>
+                      </tr>
+                      <tr>
+                        <td colSpan="4"></td>
+                        <td>{grandTotalPrice(rerenderOrderList, true)}</td>
+                        <td colSpan="3"></td>
+                        <td>{grandTotalPrice(rerenderOrderList, false)}</td>
+                        <td colSpan="2"></td>
+                      </tr>
                   </>
                 </tbody>
               </table>
-              
               <AddProductPopUp
                 rerenderOrderList={rerenderOrderList}
                 onFormValuesChange={handleFormValuesChange}
