@@ -365,17 +365,19 @@ function OrderFreight() {
       try {
         const orderResponse = await axios.get(orderUrl);
         const { xmldata: { Orders } } = orderResponse.data;
-       
+        //console.log(Orders, '<< Orders');
         if (Orders && Orders[0]) {
           setOrderClientAddress(Orders[0]);
           const productCodes = Orders[0].OrderDetails?.map((item) => item.ProductCode?.[0]) || [];
+          //console.log(Orders, '<< Orders');
           const productDetails = Orders[0].OrderDetails?.map(item => {
+            //console.log(item, '<< order details map');
             return {
               productCode: item.ProductCode?.[0] || 'UnknownCode',
               productPrice: item.ProductPrice?.[0] || 'UnknownPrice'
             }
           }) || [];
-    
+          console.log(productDetails, '<< productDetails');
           const productUrls = productCodes.map((code) => `http://localhost:5000/api/products/${code}`);
           const productResponses = await fetchProductData(productUrls);
           const validVendors = processProductResponses(productResponses, productDetails);
@@ -447,7 +449,7 @@ function OrderFreight() {
 
     const compareProductPrices = (products, orderProductDetails) => {
       const productPriceMap = {};
-    
+      console.log(products, '<< products');
       // Create a lookup map for product prices based on ProductCode
       products.forEach(product => {
         const productCode = product.ProductCode[0];
@@ -467,73 +469,97 @@ function OrderFreight() {
       return mismatchedPrices;
     };
 
+    // const processProductResponses = (productResponses, orderProductDetails) => {
+    //   console.log(productResponses, '<< productResponses');
+
+    //   const vendors = productResponses.map((response) => {
+    //     console.log(response, '<< response');
+    //     const { xmldata: { Products } } = response.data;
+
+    //     //console.log(orderProductDetails, '<< orderProductDetails');
+    //     const mismatchedPrices = compareProductPrices(Products, orderProductDetails);
+    //     //console.log(mismatchedPrices, '<< mismatchedPrices');
+    //     if (mismatchedPrices.length > 0) {
+    //       mismatchedPrices.forEach(item => {
+    //         // alert(`Mismatched Prices: Possible added option! Double check manually! ProductCode: ${item.productCode}`);
+    //         setMismatchedPrices(mismatchedPrices);
+    //         setShowModal(true);
+    //       });
+    //     } else {
+    //       console.log('All product prices match.');
+    //     }
+    
+    //     if (Products && Products.length > 0) {
+    //       const product = Products[0];
+    //       let vendorPartNo = product.Vendor_PartNo[0];
+   
+    //       // Check if ProductCode starts with 'or', 'OR', 'Or', or 'oR'
+    //       const productCode = product.ProductCode[0];
+    //       if (/^or$/i.test(productCode.substring(0, 2))) {
+    //         vendorPartNo = product.Google_Age_Group[0];
+    //       }
+    
+    //       return {
+    //         Vendor_PartNo: [vendorPartNo],
+    //         ProductCode: [productCode],
+    //         ProductName: [product.ProductName[0]],
+    //         ProductPrice: [product.ProductPrice[0]],
+    //         Vendor_Price: [product.Vendor_Price[0]],
+    //         // Quantity: [1] // filled this in fetchKitData
+    //       };
+    //     }
+    //     return null;
+    //   });
+    
+    //   return vendors.filter((vendor) => vendor !== null);
+    // };
     const processProductResponses = (productResponses, orderProductDetails) => {
+      console.log(productResponses, '<< productResponses');
+    
       const vendors = productResponses.map((response) => {
-        const { xmldata: { Products } } = response.data;
-        //console.log(Products, '<< Products');
-        //console.log(orderProductDetails, '<< orderProductDetails');
+        console.log(response, '<< response');
+    
+        // Handle cases where xmldata might be undefined or an empty string
+        const xmldata = response.data.xmldata || {};
+        const Products = xmldata.Products || [];
+    
+        if (!Products.length) {
+          console.log('No Products found in response');
+          return null;
+        }
+    
+        // Compare product prices
         const mismatchedPrices = compareProductPrices(Products, orderProductDetails);
-        //console.log(mismatchedPrices, '<< mismatchedPrices');
         if (mismatchedPrices.length > 0) {
           mismatchedPrices.forEach(item => {
-            // alert(`Mismatched Prices: Possible added option! Double check manually! ProductCode: ${item.productCode}`);
             setMismatchedPrices(mismatchedPrices);
             setShowModal(true);
           });
         } else {
           console.log('All product prices match.');
         }
-
-        // this we do not use, it was previos version, think to remove it
-        // if (Products && Products[0] && Products[0].EAN && Products[0].EAN[0]) {
-        //   const kits = Products[0].EAN[0].split(',');
-        //   if (kits[kits.length - 1] === 'extra') {
-        //     alert('Please fill out manually!!!');
-        //   }
-        //   const parsedKits = kits.map(item => {
-        //     const match = item.match(/^(\D+\d+)(?:x(\d+))?$/);
-        //     return match ? match[1] : item;
-        //   });
     
-        //   quantityItemObject = kits.reduce((acc, item) => {
-        //     const match = item.match(/^(\D+\d+)(?:x(\d+))?$/);
-        //     if (match) {
-        //       const key = match[1];
-        //       const quantity = match[2] ? parseInt(match[2], 10) : 1;
-        //       acc[key] = quantity;
-        //     }
-        //     return acc;
-        //   }, {});
+        // Process the product details
+        const product = Products[0];
+        let vendorPartNo = product.Vendor_PartNo ? product.Vendor_PartNo[0] : '';
     
-        //   const kitUrls = parsedKits.map((code) => `http://localhost:5000/api/products/${code}`);
-        //   fetchKitData(kitUrls);
-        // }
-    
-        if (Products && Products.length > 0) {
-          const product = Products[0];
-          let vendorPartNo = product.Vendor_PartNo[0];
-   
-          // Check if ProductCode starts with 'or', 'OR', 'Or', or 'oR'
-          const productCode = product.ProductCode[0];
-          if (/^or$/i.test(productCode.substring(0, 2))) {
-            vendorPartNo = product.Google_Age_Group[0];
-          }
-    
-          return {
-            Vendor_PartNo: [vendorPartNo],
-            ProductCode: [productCode],
-            ProductName: [product.ProductName[0]],
-            ProductPrice: [product.ProductPrice[0]],
-            Vendor_Price: [product.Vendor_Price[0]],
-            // Quantity: [1] // filled this in fetchKitData
-          };
+        // Check if ProductCode starts with 'or', 'OR', 'Or', or 'oR'
+        const productCode = product.ProductCode ? product.ProductCode[0] : '';
+        if (/^or$/i.test(productCode.substring(0, 2))) {
+          vendorPartNo = product.Google_Age_Group ? product.Google_Age_Group[0] : vendorPartNo;
         }
-        return null;
+    
+        return {
+          Vendor_PartNo: [vendorPartNo],
+          ProductCode: [productCode],
+          ProductName: [product.ProductName ? product.ProductName[0] : ''],
+          ProductPrice: [product.ProductPrice ? product.ProductPrice[0] : ''],
+          Vendor_Price: [product.Vendor_Price ? product.Vendor_Price[0] : ''],
+        };
       });
     
       return vendors.filter((vendor) => vendor !== null);
     };
-    
     
     const replaceQuantities = (products, replacements) => {
       products.forEach(product => {
