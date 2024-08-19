@@ -43,11 +43,12 @@ function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
     formikBag.resetForm()
   }
 
-
+  const [trigger, setTrigger] = useState(0);
   const findProduct = (product) => {
     const lowerCaseProduct = product.toLowerCase();
     //console.log(product);
     setProductCode(lowerCaseProduct);
+    setTrigger(trigger + 1); // Force useEffect to re-run
   }
   
   useEffect(() => {
@@ -82,7 +83,7 @@ function AddProductPopUp({ rerenderOrderList, onFormValuesChange }) {
       .catch((err) => {
         console.error('An error occurred while fetching data:', err)
       })
-  },[productCode])
+  },[productCode,trigger])
   // let formikPropss = React.useRef();
   return (
     <div>
